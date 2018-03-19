@@ -85,6 +85,12 @@ class Upload extends Component {
         alertMsg: `${_.map(rejectedFiles, file => file.name).join(', ')} were rejected. Only 1 VIDEO file can be uploaded at a time.`,
         alert: true,
       });
+    } else if (acceptedFiles[0].name.length > 60) {
+      this.setState({
+        success: false,
+        alertMsg: 'File name can\'t be longer than 60 characters.',
+        alert: true,
+      });
     } else {
       this.setState({ videoTitle: acceptedFiles[0].name, videoSize: acceptedFiles[0].size });
       this.props.actions.changeEditVideoInfo({

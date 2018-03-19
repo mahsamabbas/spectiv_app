@@ -34,6 +34,7 @@ class FeaturedChannel extends Component {
                   image={channel.User.avatarPath}
                   name={channel.name}
                   color={channel.color}
+                  size="sm"
                   avatarStyle={{
                     height: 72,
                     width: 72,

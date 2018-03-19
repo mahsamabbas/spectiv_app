@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
+import path from 'path';
 import _ from 'lodash';
 
 import loadImage from './../../utils/loadImage';
@@ -25,13 +26,23 @@ class Avatar extends Component {
 
   loadImage() {
     if (this.props.image) {
-      loadImage(this.props.image)
+      let imagePath = this.props.image;
+      const size = this.props.size;
+      if (size) {
+        const baseName = path.basename(imagePath);
+        const dirName = path.dirname(imagePath);
+        const delimiter = '/'; // path.delimiter(image);
+        imagePath = `${dirName}${delimiter}${size}${delimiter}${baseName}`;
+      }
+
+      loadImage(imagePath)
         .then((image) => {
           const newImage = `url(${image})`;
           if (this.mounted) {
             this.setState({ image: newImage, loading: false });
           }
-        }).catch(() => {
+        }).catch((err) => {
+          console.error(err);
           if (this.mounted) {
             this.setState({ loading: false, error: true });
           }

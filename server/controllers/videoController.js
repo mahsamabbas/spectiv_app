@@ -107,7 +107,7 @@ videoController.updateVideo = (req, res) => {
       canLike,
       accessibility: Number(accessibility),
     });
-    if (searchId) {
+    if (searchId && process.env.NODE_ENV === 'production') {
       videoIndex.partialUpdateObject({
         title,
         desc,
@@ -193,7 +193,7 @@ videoController.getVideo = (req, res) => {
     }
     video.increment('viewCount');
     // UPDATE THE VIDEO IN SEARCH INDEX
-    if (video.searchId) {
+    if (video.searchId && process.env.NODE_ENV === 'production') {
       videoIndex.partialUpdateObject({
         views: {
           value: 1,
@@ -420,6 +420,9 @@ videoController.recommendedVideos = (req, res) => {
     where: {
       id: {
         $ne: vid,
+      },
+      isDeleted: {
+        $ne: true,
       },
     },
     order: [

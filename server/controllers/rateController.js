@@ -90,7 +90,7 @@ rateController.rateVideo = (req, res) => {
     }).then((rate) => {
       if (isLiked) {
         // INCREMENT LIKE IF USER LIKED THE VIDEO
-        if (searchId) {
+        if (searchId && process.env.NODE_ENV === 'production') {
           videoIndex.partialUpdateObject({
             likes: {
               value: 1,
@@ -151,7 +151,7 @@ rateController.destroyRate = (req, res) => {
     }).then(() => {
       if (isLiked) {
         // DECREMENT VIDEO LIKES IF RATE WAS LIKE
-        if (searchId) {
+        if (searchId && process.env.NODE_ENV === 'production') {
           videoIndex.partialUpdateObject({
             likes: {
               value: 1,

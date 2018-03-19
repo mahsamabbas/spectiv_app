@@ -22,13 +22,9 @@ userController.login = (req, res) => {
 };
 
 userController.checkUploading = (req, res) => {
-  db.User.findOne({
-    where: {
-      id: req.user.id,
-    },
-    attributes: ['isUploading'],
-  }).then(data => res.status(200).json(data))
-  .catch(err => res.sttus(500).json(err));
+  res.status(200).json({
+    isUploading: req.user.isUploading
+  });
 };
 
 userController.signUp = (req, res) => {
@@ -181,6 +177,9 @@ userController.sendPasswordChange = (req, res) => {
         },
       }).then((user) => {
         if (!user) {
+          // TODO - update flow so that this security hole is closed.
+          // A bad actor could use this to find what email addresses / usernames
+          // are registered and then brute force password
           return res.status(500).json({
             message: 'There isn\'t a user with that username and email',
             success: false,

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import NoAvatar from './../general/NoAvatar.jsx';
+import Avatar from './../general/Avatar.jsx';
 
 class NavDropItem extends React.Component {
   constructor(props) {
@@ -36,11 +37,11 @@ class NavDropItem extends React.Component {
       <div>
         { this.props.userInfo ? <div className="avatar-drop-item">
           { this.props.account.avatarPath ?
-            <div
-              className="avatar-img" alt="Avatar Img" style={{
-                backgroundImage: `url('${this.props.account.avatarPath}')`,
-              }}
-            /> : <NoAvatar letter={this.props.displayName.substring(0, 2)} />
+            <Avatar
+              image={this.props.account.avatarPath}
+              size="sm"
+            />
+            : <NoAvatar letter={this.props.displayName.substring(0, 2)} />
           }
           <div className="user-info">
             <div className="name">{hasDisplayNames ? `${account.firstName} ${account.lastName}` : 'Spectiv VR'}</div>

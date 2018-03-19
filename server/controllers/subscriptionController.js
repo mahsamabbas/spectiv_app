@@ -93,7 +93,7 @@ subscriptionController.newSubscription = (req, res) => {
       },
     }).then((userSub) => {
       // INCREMENT CHANNEL SUBSCRIBER IN SEARCH INDEX
-      if (searchId) {
+      if (searchId && process.env.NODE_ENV === 'production') {
         channelIndex.partialUpdateObject({
           subscribers: {
             value: 1,
@@ -132,7 +132,7 @@ subscriptionController.deleteSubscription = (req, res) => {
       },
     }).then((userSub) => {
       // DECREMENT CHANNEL SUBSCRIBER IN SEARCH INDEX
-      if (searchId) {
+      if (searchId && process.env.NODE_ENV === 'production') {
         channelIndex.partialUpdateObject({
           subscribers: {
             value: 1,

@@ -12,9 +12,15 @@ const {
 } = process.env;
 
 let sequelize;
+
 if (process.env.NODE_ENV !== 'test') {
-  sequelize = new Sequelize(`postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DATABASE}`, {
-    logging: false,
+  // sequelize = new Sequelize(`postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DATABASE}`, {
+  //   logging: false,
+  // });
+  sequelize = new Sequelize(POSTGRES_DATABASE, POSTGRES_USERNAME, POSTGRES_PASSWORD, {
+    host: POSTGRES_HOST,
+    port: POSTGRES_PORT,
+    dialect: 'postgres'
   });
 } else {
   sequelize = new Sequelize('spectiv-test', 'Jin', '', {

@@ -17,6 +17,9 @@ module.exports = {
   "extends": ["airbnb", "plugin:react/recommended"],
   "rules": {
     "no-console": 0,
+    "quotes": 0,
+    "comma-dangle": 0,
+    "arrow-parens": 0,
     "import/no-extraneous-dependencies": 0,
     "import/extensions": [1, {
       "js": "never",

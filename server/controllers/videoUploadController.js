@@ -52,7 +52,7 @@ const crashReport = (res, userId, videoId, videoHash, searchId) => {
           db.Video.update({ isDeleted: true }, { where: { id: videoId } })
           .then(() => {
             // DELETE THE VIDEO FROM SEARCH INDEX
-            if (searchId) {
+            if (searchId && process.env.NODE_ENV === 'production') {
               videoIndex.deleteObject(searchId, (error) => {
                 if (error) {
                   console.error(error);
@@ -91,12 +91,16 @@ videoUploadController.delete = (req, res) => {
           db.Video.update({ isDeleted: true }, { where: { id: videoId } })
           .then(() => {
             // DELETE THE VIDEO FROM SEARCH INDEX
-            videoIndex.deleteObject(searchId, (error) => {
-              if (error) {
-                console.error(error);
-              }
-            });
-            res.status(200).json(data2);
+            if (process.env.NODE_ENV === 'production') {
+              videoIndex.deleteObject(searchId, (error) => {
+                if (error) {
+                  console.error(error);
+                }
+                res.status(200).json(data2);
+              });
+            } else {
+              res.status(200).json(data2);
+            }
           })
           .catch(err3 => res.status(500).json({ message: err3 }));
         }
@@ -162,32 +166,34 @@ videoUploadController.upload = (req, res) => {
           crashReport(res, req.user.id, videoId, videoHash, searchId);
         });
 
-        videoIndex.addObject(videoObj, (err, videoContent) => {
-          if (err) {
-            console.error(err);
-            crashReport(res, req.user.id, videoId, videoHash, searchId);
-            return res.status(500).json(err);
-          }
-          searchId = videoContent.objectID;
-          result.updateAttributes({
-            searchId,
-          });
-          console.log('Video was added to the index');
-          res.status(200).json({ videoId: result.id, searchId });
-          channelIndex.partialUpdateObject({
-            videos: {
-              value: searchId,
-              _operation: 'Add',
-            },
-            objectID: fields.channelSearchId,
-          }, (err2) => {
-            if (err2) {
-              console.error(err2);
+        if (process.env.NODE_ENV === 'production') {
+          videoIndex.addObject(videoObj, (err, videoContent) => {
+            if (err) {
+              console.error(err);
               crashReport(res, req.user.id, videoId, videoHash, searchId);
+              return res.status(500).json(err);
             }
-            console.log('Video objectID was added to Channel index');
+            searchId = videoContent.objectID;
+            result.updateAttributes({
+              searchId,
+            });
+            console.log('Video was added to the index');
+            res.status(200).json({ videoId: result.id, searchId });
+            channelIndex.partialUpdateObject({
+              videos: {
+                value: searchId,
+                _operation: 'Add',
+              },
+              objectID: fields.channelSearchId,
+            }, (err2) => {
+              if (err2) {
+                console.error(err2);
+                crashReport(res, req.user.id, videoId, videoHash, searchId);
+              }
+              console.log('Video objectID was added to Channel index');
+            });
           });
-        });
+        }
 
         const s3Stream = require('s3-upload-stream')(new AWS.S3());
         const upload = s3Stream.upload({
@@ -263,16 +269,18 @@ videoUploadController.upload = (req, res) => {
 
                     videopaths.thumbnailPath = `${process.env.AWS_VIDEO_CDN}/${newKey}`;
 
-                    videoIndex.partialUpdateObject({
-                      thumbnailPath: `${process.env.AWS_VIDEO_CDN}/${newKey}`,
-                      objectID: searchId,
-                    }, (error) => {
-                      if (error) {
-                        console.error(error);
-                      } else {
-                        console.log('Video thumbnail is updated');
-                      }
-                    });
+                    if (process.env.NODE_ENV === 'production') {
+                      videoIndex.partialUpdateObject({
+                        thumbnailPath: `${process.env.AWS_VIDEO_CDN}/${newKey}`,
+                        objectID: searchId,
+                      }, (error) => {
+                        if (error) {
+                          console.error(error);
+                        } else {
+                          console.log('Video thumbnail is updated');
+                        }
+                      });
+                    }
 
                     s3.copyObject({ CopySource: `${process.env.AWS_VIDEO_BUCKET}/${oldKey}`, Key: newKey },
                     (err4) => {

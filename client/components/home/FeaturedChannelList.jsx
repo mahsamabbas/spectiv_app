@@ -11,8 +11,8 @@ class FeaturedChannelList extends Component {
   }
 
   renderFeaturedChannels() {
-    return this.props.featuredChannels.map((channel) => {
-      return <FeaturedChannel channel={channel} />;
+    return this.props.featuredChannels.map((channel, index) => {
+      return <FeaturedChannel key={index} channel={channel} />;
     });
   }
 

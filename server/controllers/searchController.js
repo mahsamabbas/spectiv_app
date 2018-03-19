@@ -88,7 +88,10 @@ searchController.search = (req, res) => {
     });
   };
 
-  client.search(queries, searchCallback);
+  if (process.env.NODE_ENV === 'production') {
+    return client.search(queries, searchCallback);
+  }
+  return searchCallback(null, []);
 };
 
 export default searchController;

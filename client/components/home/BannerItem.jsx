@@ -83,6 +83,7 @@ class BannerItem extends Component {
                   image={video.Channel.User.avatarPath}
                   name={video.Channel.name}
                   color={video.Channel.color}
+                  size="xs"
                   avatarStyle={{
                     width: 34,
                     height: 34,

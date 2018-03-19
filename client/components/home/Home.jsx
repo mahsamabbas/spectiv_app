@@ -121,7 +121,7 @@ class Home extends Component {
   }
 
   getThumbContent(featuredChannels) {
-    return featuredChannels.map(channel => <FeaturedChannel channel={channel} />);
+    return featuredChannels.map((channel, index) => <FeaturedChannel key={index} channel={channel} />);
   }
 
   likeButtons() {

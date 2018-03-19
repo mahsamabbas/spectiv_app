@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { browserHistory, Link } from 'react-router';
-import _ from 'lodash';
 
 import NotShitDropDown from './../general/NotShitDropDown.jsx';
 import NoAvatar from './../general/NoAvatar.jsx';
+import Avatar from './../general/Avatar.jsx';
 import SearchBar from './../search/SearchBar.jsx';
 
 class UserNavOptions extends Component {
@@ -183,11 +183,15 @@ class UserNavOptions extends Component {
             className="account-nav" onClick={() => this.toggleAccountNav()}
           >
             { this.props.account.avatarPath ?
-              <div
-                className="avatar-img" alt="Avatar Img" style={{
-                  backgroundImage: `url('${this.props.account.avatarPath}')`,
-                }}
-              /> : <NoAvatar color={this.props.account.channel.color} letter={displayName.substring(0, 2)} />
+              <Avatar
+                image={this.props.account.avatarPath}
+                size="xs"
+              />
+              :
+              <NoAvatar
+                color={this.props.account.channel.color}
+                letter={displayName.substring(0, 2)}
+              />
             }
             <img className="drop-down-img" src="/static/images/white-drop-down-arrow.svg" alt="DropDown Image" />
             <NotShitDropDown

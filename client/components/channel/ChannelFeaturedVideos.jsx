@@ -33,6 +33,7 @@ class ChannelFeaturedVideos extends Component {
       ];
 
       if (videos.length > 1) {
+        // TODO - redo w/ map so unique keys can be provided to div
         contentArr = contentArr.concat([
           <h5 className="recent-videos-title">Recent videos</h5>,
           <div className="recent-videos-wrapper">

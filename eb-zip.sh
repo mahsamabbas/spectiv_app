@@ -36,7 +36,7 @@ echo "==========================="
 echo "| running webpack         |"
 echo "==========================="
 echo ""
-webpack -p --config ./webpack.production.config.js
+./node_modules/.bin/webpack -p --config ./webpack.production.config.js
 
 
 echo ""

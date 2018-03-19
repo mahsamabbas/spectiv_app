@@ -13,6 +13,7 @@ class MyChannel extends Component {
 
     this.state = {
       loading: true,
+      totalSubscriber: 0,
     };
   }
 
@@ -28,6 +29,7 @@ class MyChannel extends Component {
       this.props.actions.setUserChannel(res.data.channel);
       this.setState({
         loading: false,
+        totalSubscriber: res.data.count,
       });
     }).catch((err) => {
       console.log(err);
@@ -61,6 +63,7 @@ class MyChannel extends Component {
         channel={this.props.account.channel}
         videos={this.props.account.channel.Videos}
         loading={this.state.loading}
+        totalSubscriber={this.state.totalSubscriber}
         isUserChannel
       />);
     }
