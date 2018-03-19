@@ -2,10 +2,12 @@ import React, { Component } from 'react';
 import { Link } from 'react-router';
 import path from 'path';
 import _ from 'lodash';
+import { avatar } from './../../constants/actionTypes';
 
 import loadImage from './../../utils/loadImage';
 
 class Avatar extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -32,6 +34,7 @@ class Avatar extends Component {
         const baseName = path.basename(imagePath);
         const dirName = path.dirname(imagePath);
         const delimiter = '/'; // path.delimiter(image);
+        
         imagePath = `${dirName}${delimiter}${size}${delimiter}${baseName}`;
       }
 
@@ -51,6 +54,13 @@ class Avatar extends Component {
   }
 
   render() {
+    const avatar = {
+      xs: '50',
+      sm: '100',
+      md: '250',
+      lg: '500',
+      xl: '800'
+  }
     const { image, color, name, doesLink, avatarStyle } = this.props;
     let style = {};
 
@@ -67,6 +77,8 @@ class Avatar extends Component {
         style.color = color;
       }
       if (doesLink) {
+      //   style.width = 100;
+      // style.height = 100;
         return (
           <Link style={{ ...style, ...givenStyle }} to={`/channel/${name}`} className="no-avatar">
             { displayname.substring(0, 2) }
@@ -88,6 +100,7 @@ class Avatar extends Component {
     };
 
     if (doesLink) {
+      style.width = avatar.xs;
       return (
         <Link style={{ ...style, ...givenStyle }} to={`/channel/${name}`} className="avatar" />
       );
