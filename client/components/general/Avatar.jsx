@@ -54,13 +54,6 @@ class Avatar extends Component {
   }
 
   render() {
-    const avatar = {
-      xs: '50',
-      sm: '100',
-      md: '250',
-      lg: '500',
-      xl: '800'
-  }
     const { image, color, name, doesLink, avatarStyle } = this.props;
     let style = {};
 
