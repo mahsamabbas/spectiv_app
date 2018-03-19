@@ -1,0 +1,259 @@
+nav.navbar-mobile {
+  height: 60px;
+  background: $spectiv__tint_color;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px;
+  display: flex;
+  justify-content: space-between;
+  padding-left: 16px;
+  padding-right: 8px;
+  position: relative;
+  z-index: 10;
+  .navbar-left {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    .navbar-menu-wrapper {
+      img {
+        height: 16px;
+      }
+    }
+    .logo-home {
+      cursor: pointer;
+      img {
+        height: 36px;
+        &:first-child {
+          padding-right: 6px;
+        }
+      }
+    }
+  }
+  .navbar-right {
+    flex: 4;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    font-family: 'HKNova-light', sans-serif;
+    &.visitor {
+      .general-options {
+        margin-right: 0px !important;
+      }
+    }
+    button {
+      border: none;
+      background: transparent;
+    }
+    .general-options {
+      display: flex;
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      margin-right: 12px;
+      &.remove-marg {
+        margin-right: 0px;
+        button {
+          img {
+            margin: 0px !important;
+          }
+        }
+      }
+      button {
+        padding-left: 12px;
+        padding-right: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      li {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        transition: all .25s ease-in-out;
+        &:hover {
+          img {
+            transform: translateY(-8px);
+          }
+        }
+        &:active {
+          background: rgba(0,0,0, .12);
+        }
+        .account-nav-item {
+          span {
+            border: 1px solid white;
+            color: white;
+          }
+          &:nth-child(2) {
+              span {
+                background: white;
+                color: #4EBD94;
+              }
+          }
+        }
+        .account-nav-item {
+          text-decoration: none;
+          font-size: 14px;
+          padding-left: 8px;
+          padding-right: 8px;
+          &:hover {
+            span {
+              border: 1px solid #469a7b;
+              color: #469a7b;
+            }
+          }
+          span {
+            border: 1px solid white;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 10em;
+            transition: all .25s ease-in-out;
+          }
+        }
+
+        a {
+          height: 100%;
+          padding-left: 12px;
+          padding-right: 12px;
+          display: flex;
+          align-items: center;
+          img {
+            height: 30px;
+            width: auto;
+            transition: all .25s ease-in-out;
+          }
+        }
+      }
+    }
+    .avatar-img {
+      height: 42px;
+      width: 42px;
+      border-radius: 50%;
+      margin-right: 8px;
+      box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+      background-color: #686578;
+    }
+    .upload-img {
+      height: 30px;
+      width: 30px;
+      margin-right: 25px;
+    }
+    .search-img {
+      margin-top: 5px;
+      margin-right: 10px;
+    }
+    img {
+      height: 25px;
+      width: 25px;
+    }
+  }
+  button.back-btn {
+    padding-top: 7px;
+    border: none;
+    background: transparent;
+    margin-left: -12px;
+    img {
+      height: 22px;
+      width: 22px;
+    }
+  }
+  .ais-InstantSearch__root {
+    width: 100%;
+    .search-bar-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-top: 12px;
+      width: 98%;
+      input {
+        width: 100%;
+        border: none;
+        padding-left: 6px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        color: white;
+        background: transparent;
+        border-top: 1px solid transparent;
+        border-left: 1px solid transparent;
+        transition: all .35s cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+        border-bottom: 1px solid #ffffff;
+        border-top-left-radius: 0px;
+        border-bottom-left-radius: 0px;
+        &:focus {
+          outline: none;
+          border-top-color: #4EBD94;
+          border-left-color: #4EBD94;
+          border-top-left-radius: 4px;
+          border-bottom-left-radius: 4px;
+          & + .search-bar-btn {
+              border-top-right-radius: 4px;
+              border-bottom-right-radius: 4px;
+          }
+        }
+        &::placeholder {
+          font-family: 'HKNova-light', sans-serif;
+          font-size: 14px;
+          color: rgba(255, 255, 255, .5);
+        }
+      }
+      .search-bar-btn {
+        border: none;
+        background: #4EBD94;
+        transition: all .35s cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+        &:focus {
+          outline: none;
+        }
+        img {
+          height: 20px;
+        }
+      }
+    }
+    .search-result {
+      position: absolute;
+      z-index: 1;
+      right: 8.5%;
+      background-color: #F7F7F7;
+      width: 80%;
+      margin-top: 12px;
+      padding: 10px 6px;
+      box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px;
+      button {
+        border: none;
+        width: 50%;
+        background: transparent;
+        font-family: 'HKNova', sans-serif;
+        font-size: 15px;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        &.active {
+          border-bottom: 2px solid #4EBD94;
+        }
+        &:focus {
+          outline: none;
+        }
+      }
+      .search-result-item {
+        margin: 10px 5px;
+        font-family: 'HKNova-light', sans-serif;
+        a {
+          text-decoration: none;
+          color: #4fbd94;
+          em.ais-Highlight__highlighted {
+            color: black;
+            font-style: normal;
+          }
+          &:hover {
+            cursor: pointer;
+          }
+        }
+      }
+      .empty-list-text {
+        margin-top: 17px;
+        &:hover {
+          cursor: default;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,157 @@
+section#edit-channel {
+  position: relative;
+  max-width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 36px;
+  .channel-header {
+    text-align: center;
+    font-size: 26px;
+  }
+  .edit-channel-wrapper {
+    display: flex;
+    justify-content: center;
+    @media #{$screen-small} {
+      flex-direction: column-reverse;
+    }
+    .left-wrapper {
+      flex: 1;
+      padding-right: 10px;
+      .image-upload {
+        max-width: 350px;
+        .channel-color-picker {
+          display: flex;
+          justify-content: space-around;
+        }
+      }
+    }
+    .right-wrapper {
+      flex: 1;
+      padding-left: 10px;
+      .channel-title {
+        input {
+          width: 100%;
+          font-size: 18px;
+          margin-bottom: 12px;
+          padding: 8px 16px;
+          background: transparent;
+          border: 1px solid transparent;
+          border-bottom: 1px solid #4EBD94;
+          font-family: 'HKNova-light', sans-serif;
+          border-radius: 0;
+          transition: all .15s ease-in-out;
+          color: #1d1d1f;
+          box-sizing: border-box;
+          &:focus {
+            outline: none;
+            border: 1px solid #eef0f3;
+            background: #f9fafc;
+            border-radius: 4px;
+          }
+        }
+      }
+      .channel-description {
+        textarea {
+          width: 100%;
+          font-size: 18px;
+          margin-bottom: 12px;
+          padding: 8px 16px;
+          background: transparent;
+          border: 1px solid transparent;
+          border-bottom: 1px solid #4EBD94;
+          font-family: 'HKNova-light', sans-serif;
+          border-radius: 0;
+          transition: all .15s ease-in-out;
+          color: #1d1d1f;
+          box-sizing: border-box;
+          resize: none;
+          &:focus {
+            outline: none;
+            border: 1px solid #eef0f3;
+            background: #f9fafc;
+            border-radius: 4px;
+          }
+        }
+      }
+      .channel-email {
+        input {
+          width: 100%;
+          font-size: 18px;
+          margin-bottom: 12px;
+          padding: 8px 16px;
+          background: transparent;
+          border: 1px solid transparent;
+          border-bottom: 1px solid #4EBD94;
+          font-family: 'HKNova-light', sans-serif;
+          border-radius: 0;
+          transition: all .15s ease-in-out;
+          color: #1d1d1f;
+          box-sizing: border-box;
+          &:focus {
+            outline: none;
+            border: 1px solid #eef0f3;
+            background: #f9fafc;
+            border-radius: 4px;
+          }
+        }
+      }
+      .categories-wrapper {
+        .category-error {
+          font-size: 14px;
+          color: red;
+        }
+        .channel-categories {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          align-items: center;
+          .category {
+            position: relative;
+            width: 25%;
+            .category-checkbox {
+              padding: 0px 5px;
+              cursor: pointer;
+              &:hover {
+                background-color: #4EBD94;
+                color: white;
+              }
+            }
+            // text-align: right;
+            .category-label {
+              font-size: 16px;
+              margin-left: 10px;
+            }
+            input {
+              // position: absolute;
+              // top: 0;
+              // right: 5px;
+              // float: right;
+            }
+          }
+        }
+      }
+    }
+  }
+  .save-btn-wrapper {
+    text-align: center;
+    margin-top: 15px;
+    .save-btn {
+      cursor: pointer;
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      background: #4EBD94;
+      font-size: 16px;
+      font-family: 'HKNova-light', sans-serif;
+      transition: all .15s ease-in-out;
+      text-transform: uppercase;
+      &:focus {
+        outline: none;
+      }
+      &:hover {
+        background: #41a681;
+      }
+    }
+  }
+}

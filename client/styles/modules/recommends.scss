@@ -1,0 +1,24 @@
+.recommend-list-wrapper {
+  height: calc(100% - 88px);
+  overflow-y: auto;
+  .recommend-list {
+    width: 92%;
+    margin-top: 16px;
+    margin-left: auto;
+    margin-right: auto;
+    .recommend-item {
+      display: flex;
+      height: 15%;
+      img {
+        height: 100%;
+        width: 55%;
+      }
+      .recommend-info {
+        margin-left: 15px;
+        a {
+          text-decoration: none;
+        }
+      }
+    }
+  }
+}

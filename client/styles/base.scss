@@ -1,0 +1,83 @@
+@import './hknovaFont.scss';
+@import './color.scss';
+
+$screen-medium: "only screen and (max-width : 997px)";
+$screen-small: "only screen and (max-width : 768px)";
+$screen-xsmall: "only screen and (max-width : 450px)";
+
+html, body {
+  font-family: 'HKNova', sans-serif;
+  height: 100%;
+  background: $spectiv__back_color;
+}
+
+#app {
+  height: 100%;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  @media (max-width: 550px) {
+    overflow-x: hidden;
+  }
+}
+
+.transition-component {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #999999;
+  z-index: 999;
+  transition: 0.5s;
+  opacity: 0;
+  visibility: hidden;
+  &.show {
+      opacity: 1;
+      visibility: visible;
+  }
+  &.hide {
+      opacity: 0;
+      visibility: hidden;
+  }
+  .loading-item {
+      position: absolute;
+      width: 30%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+  }
+}
+
+@import './modules/layout.scss';
+@import './modules/navbar.scss';
+@import './modules/not-shit-drop-down.scss';
+@import './modules/color-picker.scss';
+@import './modules/channel-page.scss';
+@import './modules/results-page.scss';
+@import './modules/tabs.scss';
+@import './modules/video-page.scss';
+@import './modules/drop-item.scss';
+@import './modules/comments.scss';
+@import './modules/apply-page.scss';
+@import './modules/error-handle';
+@import './modules/recommends.scss';
+@import './modules/upload.scss';
+@import './modules/progress-bar.scss';
+@import './modules/edit-video.scss';
+@import './modules/edit-channel.scss';
+@import './modules/check-box.scss';
+@import './modules/overlay-saving.scss';
+@import './modules/apply-cta.scss';
+@import './modules/approved-page.scss';
+@import './modules/homepage.scss';
+@import './modules/video-manager.scss';
+@import './modules/avatar.scss';
+@import './modules/confirm.scss';
+@import './modules/page-loading.scss';
+@import './modules/setting-page.scss';
+@import './modules/mobile-navbar.scss';
+@import './modules/rodal.scss';
+@import './modules/react-tags.scss';
+@import './modules/subscription-page.scss';
+@import './modules/alpha-info.scss';
+@import './modules/lazy-load.scss';

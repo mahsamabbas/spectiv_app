@@ -1,0 +1,60 @@
+section#apply-cta {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(180deg, #185666, #348766);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .cta-card {
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+    background-image: url('/static/images/scene.svg');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    min-height: 500px;
+    min-width: 350px;
+    max-width: 700px;
+    width: 66.66%;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 4px;
+    h2 {
+      color: #348766;
+      text-align: center;
+    }
+    .bottom-wrapper {
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 24px;
+      h4 {
+        color: #348766;
+        text-align: center;
+      }
+      a {
+        cursor: pointer;
+        border: none;
+        color: white;
+        padding: 12px 18px;
+        border-radius: 6px;
+        background: #4EBD94;
+        font-size: 14px;
+        font-family: 'HKNova-light', sans-serif;
+        transition: all .15s ease-in-out;
+        text-align: center;
+        text-decoration: none;
+        width: 50%;
+        align-self: center;
+        &:focus {
+          outline: none;
+        }
+        &:hover {
+          background: #41a681;
+        }
+      }
+    }
+  }
+}

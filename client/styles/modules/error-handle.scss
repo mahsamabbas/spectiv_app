@@ -1,0 +1,103 @@
+section#error {
+    position: absolute;
+    background-color: $spectiv__tint_color;
+    width: 100%;
+    height: calc(100% - 60px);
+    background-color: $spectiv__font_grey_40;
+    .back-wrapper {
+        width: 100%;
+        height: 100%;
+        background-image: url('/static/images/bk-error.svg');
+        .error-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60%;
+            .error-title {
+                font-family: 'HKNova-xbold';
+                color: $spectiv__tint_color;
+                font-size: 3rem;
+            }
+            .error-message {
+                color: $spectiv__color_bright;
+                font-size: 1.4rem;
+                font-family: 'HKNova';
+            }
+            .contact-btn {
+                background-color: $spectiv__tint_color;
+                color: $spectiv__color_bright;
+                width: fit-content;
+                padding: 1rem;
+                border-radius: 5px;
+                font-size: 1rem;
+                cursor: pointer;
+            }
+        }
+    }
+}
+.error-modal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .rodal-dialog {
+      max-width: 400px !important;
+      @media #{$screen-medium} {
+        width: 80% !important;
+      }
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            .warning-img {
+                width:50px;
+                padding-top: 2rem;
+                padding-bottom : 1rem;
+            }
+            h1 {
+                font-size: 1.5rem;
+                font-family: 'HKNova-bold'
+            }
+            p {
+                max-width: 70%;
+                text-align: center;
+                font-size: 1.2rem;
+                font-family: 'HKNova';
+            }
+        }
+
+        button.success-btn {
+          position: absolute;
+          width: 100%;
+          height: 50px;
+          left: 0;
+          bottom: 0;
+          background-color: #4EBD94 !important;
+          border-radius: 0 !important;
+          color: white;
+          border: none;
+          cursor: pointer;
+          outline: none;
+          &:hover {
+            background-color: #3EAD84 !important;
+          }
+        }
+
+        button.dismiss-btn {
+            position: absolute;
+            width: 100%;
+            height: 50px;
+            left: 0;
+            bottom: 0;
+            background-color: #f2484e !important;
+            border-radius: 0 !important;
+            color: white;
+            border: none;
+            cursor: pointer;
+            outline: none;
+            &:hover {
+              background-color: #e2383e !important;
+            }
+        }
+    }
+}

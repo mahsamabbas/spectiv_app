@@ -1,0 +1,96 @@
+section#settings-page {
+  position: relative;
+  width: 80%;
+  max-width: 1300px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 28px;
+  .section-heading {
+    text-align: center;
+  }
+  .settings-wrapper {
+    display: flex;
+    justify-content: space-between;
+    .left-wrapper {
+      width: 45%;
+      .image-upload {
+        padding-right: 3rem;
+      }
+      @media #{$screen-small} {
+        display: none;
+      }
+      @media #{$screen-small} {
+        display: none;
+      }
+    }
+    .right-wrapper {
+      width: 45%;
+      flex-direction: column;
+      @media #{$screen-small} {
+        h4 {
+          text-align: center;
+        }
+      }
+      .edit-user-info {
+        position: relative;
+        margin-bottom: 30px;
+      }
+      .button-wrapper {
+        display: flex;
+        justify-content: flex-end;
+      }
+      input {
+        width: 100%;
+        font-size: 18px;
+        margin-bottom: 12px;
+        padding: 8px 16px;
+        background: transparent;
+        border: 1px solid transparent;
+        border-bottom: 1px solid #4EBD94;
+        font-family: 'HKNova-light', sans-serif;
+        border-radius: 0;
+        transition: all .15s ease-in-out;
+        color: #1d1d1f;
+        box-sizing: border-box;
+        &:focus {
+          outline: none;
+          border: 1px solid #eef0f3;
+          background: #f9fafc;
+          border-radius: 4px;
+        }
+      }
+      button {
+        cursor: pointer;
+        border: none;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 6px;
+        background: #4EBD94;
+        font-size: 16px;
+        font-family: 'HKNova-light', sans-serif;
+        transition: all .15s ease-in-out;
+        text-transform: uppercase;
+        &:focus {
+          outline: none;
+        }
+        &:hover {
+          background: #41a681;
+        }
+      }
+    }
+    @media #{$screen-small} {
+      flex-direction: column;
+      align-items: center;
+      .left-wrapper {
+        width: 90%;
+      }
+      .right-wrapper {
+        width: 90%;
+        .button-wrapper {
+          justify-content: center;
+          padding: 0.5rem;
+        }
+      }
+    }
+  }
+}

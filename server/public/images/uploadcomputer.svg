@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 197.15 190"><defs><style>.cls-1{fill:#888;}.cls-2{fill:#565656;}.cls-3,.cls-7{fill:#ddd;}.cls-4,.cls-8,.cls-9{fill:none;}.cls-4,.cls-6,.cls-7{stroke:#383838;}.cls-4,.cls-8{stroke-linecap:round;}.cls-4,.cls-6,.cls-7,.cls-8,.cls-9{stroke-miterlimit:10;stroke-width:3px;}.cls-5{fill:#383838;}.cls-6{fill:#b7b7b7;}.cls-8,.cls-9{stroke:#f7f7f7;}</style></defs><title>uploadcomputerv2</title>
+    <g id="upload">
+        <rect class="cls-1" x="1.5" y="1.5" width="194.15" height="115.14" rx="4.12" ry="4.12"/>
+        <path class="cls-2" d="M195.65,114.36V5.94A4.44,4.44,0,0,0,191.2,1.5H4.22a.75.75,0,0,0-.38,1.39L193.69,115.48A1.3,1.3,0,0,0,195.65,114.36Z"/>
+        <path class="cls-3" d="M1.92,116.22H196.07a0,0,0,0,1,0,0v19.37a5.84,5.84,0,0,1-5.84,5.84H7.76a5.84,5.84,0,0,1-5.84-5.84V116.22A0,0,0,0,1,1.92,116.22Z"/>
+        <rect class="cls-4" x="1.5" y="1.5" width="194.15" height="139.94" rx="4.59" ry="4.59"/>
+        <line class="cls-4" x1="1.5" y1="116.64" x2="195.65" y2="116.64"/>
+        <circle class="cls-5" cx="98.99" cy="128.83" r="2.52"/>
+        <rect class="cls-6" x="75.67" y="141.86" width="46.65" height="29.42"/>
+        <path class="cls-7" d="M60.07,171.27h77.85a0,0,0,0,1,0,0v9a8.27,8.27,0,0,1-8.27,8.27H68.34a8.27,8.27,0,0,1-8.27-8.27v-9A0,0,0,0,1,60.07,171.27Z"/>
+        <path class="cls-8" d="M132.07,77.65a42.1,42.1,0,0,1-37.33,22.62">
+        
+        <animateTransform attributeName="transform"
+            type="rotate"
+            from="360 96 59"
+            to="0 96 59"
+            begin="0s"
+            dur="1.5s"
+            repeatCount="indefinite"/>
+        
+        </path>
+        <path class="cls-9" d="M56.45,40.67a42.1,42.1,0,0,1,38.29-24.6">
+        
+        <animateTransform attributeName="transform"
+            type="rotate"
+            from="360 96 59"
+            to="0 96 59"
+            begin="0s"
+            dur="1.5s"
+            repeatCount="indefinite"/>
+        
+        </path>
+    
+        <polyline class="cls-8" points="126.73 79.22 132.25 76.89 133.6 82.9">
+        
+        <animateTransform attributeName="transform"
+            type="rotate"
+            from="360 96 59"
+            to="0 96 59"
+            begin="0s"
+            dur="1.5s"
+            repeatCount="indefinite"/>
+        
+        </polyline>
+        <polyline class="cls-8" points="62.28 37.85 56.76 40.18 55.41 34.16">
+        
+        <animateTransform attributeName="transform"
+            type="rotate"
+            from="360 96 59"
+            to="0 96 59"
+            begin="0s"
+            dur="1.5s"
+            repeatCount="indefinite"/>
+        
+        </polyline>
+    </g>
+</svg>

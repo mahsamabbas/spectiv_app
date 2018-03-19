@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale = 1.0, maximum-scale = 1.0, user-scalable = no, width = device-width">
+  <meta name="viewport" content="user-scalable=1.0,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">
+
+  <meta name="dl8-customization-primary-color" content="#49bd94">
+  <meta name="dl8-customization-secondary-color" content="#ffffff">
+  <meta name="dl8-customization-brand-logo" content="https://daks2k3a4ib2z.cloudfront.net/58fd371467a8320d4f29aed3/5911aa3168856d32e4be611b_fb%20logo%20(1).png">
+  <meta name="dl8-customization-brand-url" content="https://www.spectivvr.com/">
+  <meta name="dl8-customization-no-brand-watermark-logo">
+  <meta name="dl8-customization-no-compass">
+
+  <link rel="shortcut icon" href="/static/images/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/static/images/favicon.ico" type="image/x-icon">
+  <script src="//cdn.delight-vr.com/latest/dl8-45f7ec81605e9c3ae705e4b2cbd98f0087b08a60.js" async></script>
+
+  <title>Spectiv VR</title>
+
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+    }
+  </style>
+
+  <script type="text/javascript">
+    (function () {
+      function addAttribute (element, name, value) {
+        if (name !== undefined) {
+          var attr = document.createAttribute(name);
+          attr.value = value
+          element.attributes.setNamedItem(attr);
+        }
+      }
+
+      var video_tag = document.createElement("dl8-video");
+      var params = document.location.search.slice(1).split("&");
+      var source_params = {};
+
+      params.map(function (e, index) {
+        e = decodeURIComponent(e);
+        var matches = e.match(/source_(\d+)_([a-z]+)=(.*)/)
+        if (matches && matches.length === 4) {
+          var id = matches[1]
+          if (!source_params[id]) {
+            source_params[id] = document.createElement("source");
+            video_tag.appendChild(source_params[id]);
+          }
+          addAttribute(source_params[id], matches[2], matches[3])
+        } else {
+          matches = e.match(/([a-z0-9\-]+)=(.*)/)
+          if (matches && matches.length === 3) {
+            addAttribute(video_tag, matches[1], matches[2])
+          }
+        }
+      });
+
+      addAttribute(video_tag, "width", "100%");
+      addAttribute(video_tag, "height", "100%");
+
+      document.addEventListener("DOMContentLoaded", function (event) {
+        var content = document.querySelector("body");
+        content.appendChild(video_tag);
+      })
+    })();
+  </script>
+
+  
+</head>
+<body>
+</body>
+</html>

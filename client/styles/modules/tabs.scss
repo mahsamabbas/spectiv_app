@@ -1,0 +1,41 @@
+section.tabs {
+  margin-left: 12px;
+  @media #{$screen-medium} {
+    margin: 0px;
+    text-align: center;
+  }
+  .tab-btn {
+    border: none;
+    background: transparent;
+    font-family: 'HKNova', sans-serif;
+    font-size: 18px;
+    color: #565656;
+    cursor: pointer;
+    padding-left: 24px;
+    padding-right: 24px;
+    margin: 0px 12px;
+    transition: all .25s ease-in-out;
+    border-bottom: 2px solid transparent;
+    border-radius: 0px;
+    @media #{$screen-xsmall} {
+      padding: 2px 5px;
+      text-align: center;
+      margin: 0px 8px;
+      font-size: 16px;
+    }
+    &.active {
+      border-bottom: 2px solid #4EBD94;
+    }
+    &:focus {
+      outline: none;
+    }
+  }
+  .tab-content {
+    margin-top: 24px;
+  }
+  .channel-desc {
+    text-align: left;
+    margin-top: 25px;
+    white-space: pre-wrap;
+  }
+}

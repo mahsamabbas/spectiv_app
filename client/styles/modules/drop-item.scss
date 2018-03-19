@@ -1,0 +1,54 @@
+.avatar-drop-item {
+    width: 250px;
+    display: flex;
+    flex-direction: row;
+    padding: 10px;
+    background: $spectiv__font_grey_80;
+    cursor: pointer;
+    .user-info {
+        padding-left: 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        max-width: 160px;
+    }
+    .name {
+        color: $spectiv__tint_color;
+        font-size: 14px;
+        font-family: 'HKNova-xbold';
+    }
+    .email {
+        font-family: 'HKNova';
+        font-size: 14px;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        -ms-word-break: break-all;
+        word-break: break-word;
+        -ms-hyphens: auto;
+        -moz-hyphens: auto;
+        -webkit-hyphens: auto;
+        hyphens: auto;
+        white-space: pre-wrap;
+        word-break: break-all;
+    }
+}
+.drop-item {
+    width: 250px;
+    display: flex;
+    flex-direction: row;
+    padding: 10px;
+    align-items: center;
+    .item-icon {
+        width: 42px;
+        height: 42px;
+        background-repeat: no-repeat;
+    }
+    .displayName {
+        margin-left: 2rem;
+    }
+    &:hover {
+        color: $spectiv__tint_color;
+        background: $spectiv__font_grey_90;
+        transition: all .15s ease-in-out;
+    }
+}

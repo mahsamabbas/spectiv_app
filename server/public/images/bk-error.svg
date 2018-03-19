@@ -1,0 +1,647 @@
+<svg id="video" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 698"><defs><style>.cls-1{fill:#4ebd94;}.cls-2{fill:#358666;}.cls-3,.cls-4{fill:none;stroke:#565656;stroke-miterlimit:10;stroke-width:3px;}.cls-4{stroke-linecap:round;}</style></defs><title>error</title>
+    <rect class="cls-1" x="1073.55" y="179.44" width="21.91" height="21.91" rx="3.36" ry="3.36">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="7s"
+                          values="0,30;0,-30;0,30"
+                          repeatCount="indefinite"/>
+        
+    </rect>
+    <path class="cls-2" d="M1073.55,190.08h21.91a0,0,0,0,1,0,0v7.63a3.63,3.63,0,0,1-3.63,3.63h-14.64a3.63,3.63,0,0,1-3.63-3.63v-7.63A0,0,0,0,1,1073.55,190.08Z">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="7s"
+                          values="0,30;0,-30;0,30"
+                          repeatCount="indefinite"/>
+        
+    </path>
+    <rect class="cls-3" x="1073.55" y="179.44" width="21.91" height="21.91" rx="3.36" ry="3.36">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="7s"
+                          values="0,30;0,-30;0,30"
+                          repeatCount="indefinite"/>
+        
+    </rect>
+    <line class="cls-4" x1="1084.5" y1="202.28" x2="1084.5" y2="211.05">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="7s"
+                          values="0,30;0,-30;0,30"
+                          repeatCount="indefinite"/>
+        
+    </line>
+    <line class="cls-4" x1="1084.5" y1="216.68" x2="1084.5" y2="221.06">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="7s"
+                          values="0,30;0,-30;0,30"
+                          repeatCount="indefinite"/>
+        
+    </line>
+    
+    
+    
+    
+    <rect class="cls-1" x="1217.55" y="482.44" width="21.91" height="21.91" rx="3.36" ry="3.36">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="5s"
+                          values="0,12;0,-12;0,12"
+                          repeatCount="indefinite"/>
+        
+    </rect>
+    <path class="cls-2" d="M1217.55,493.08h21.91a0,0,0,0,1,0,0v7.63a3.63,3.63,0,0,1-3.63,3.63h-14.64a3.63,3.63,0,0,1-3.63-3.63v-7.63A0,0,0,0,1,1217.55,493.08Z">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="5s"
+                          values="0,12;0,-12;0,12"
+                          repeatCount="indefinite"/>
+        
+    </path>
+    <rect class="cls-3" x="1217.55" y="482.44" width="21.91" height="21.91" rx="3.36" ry="3.36">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="5s"
+                          values="0,12;0,-12;0,12"
+                          repeatCount="indefinite"/>
+        
+    </rect>
+    <line class="cls-4" x1="1228.5" y1="505.28" x2="1228.5" y2="514.05">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="5s"
+                          values="0,12;0,-12;0,12"
+                          repeatCount="indefinite"/>
+        
+    </line>
+    <line class="cls-4" x1="1228.5" y1="519.68" x2="1228.5" y2="524.06">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="5s"
+                          values="0,12;0,-12;0,12"
+                          repeatCount="indefinite"/>
+        
+    </line>
+    
+    
+    
+    
+    
+    
+    <rect class="cls-1" x="1327.55" y="264.44" width="21.91" height="21.91" rx="3.36" ry="3.36">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="7s"
+                          values="0,30;0,-30;0,30"
+                          repeatCount="indefinite"/>
+    </rect>
+    <path class="cls-2" d="M1327.55,275.08h21.91a0,0,0,0,1,0,0v7.63a3.63,3.63,0,0,1-3.63,3.63h-14.64a3.63,3.63,0,0,1-3.63-3.63v-7.63A0,0,0,0,1,1327.55,275.08Z">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="7s"
+                          values="0,30;0,-30;0,30"
+                          repeatCount="indefinite"/>
+    </path>
+    <rect class="cls-3" x="1327.55" y="264.44" width="21.91" height="21.91" rx="3.36" ry="3.36">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="7s"
+                          values="0,30;0,-30;0,30"
+                          repeatCount="indefinite"/>
+    </rect>
+    <line class="cls-4" x1="1338.5" y1="287.28" x2="1338.5" y2="296.05">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="7s"
+                          values="0,30;0,-30;0,30"
+                          repeatCount="indefinite"/>
+    </line>
+    <line class="cls-4" x1="1338.5" y1="301.68" x2="1338.5" y2="306.06">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="7s"
+                          values="0,30;0,-30;0,30"
+                          repeatCount="indefinite"/>
+    </line>
+    
+    
+    
+    
+    
+    <rect class="cls-1" x="1012.55" y="601.44" width="21.91" height="21.91" rx="3.36" ry="3.36">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="3s"
+                          values="0,15;0,-15;0,15"
+                          repeatCount="indefinite"/>
+        
+    </rect>
+    <path class="cls-2" d="M1012.55,612.08h21.91a0,0,0,0,1,0,0v7.63a3.63,3.63,0,0,1-3.63,3.63h-14.64a3.63,3.63,0,0,1-3.63-3.63v-7.63A0,0,0,0,1,1012.55,612.08Z">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="3s"
+                          values="0,15;0,-15;0,15"
+                          repeatCount="indefinite"/>
+        
+    </path>
+    <rect class="cls-3" x="1012.55" y="601.44" width="21.91" height="21.91" rx="3.36" ry="3.36">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="3s"
+                          values="0,15;0,-15;0,15"
+                          repeatCount="indefinite"/>
+        
+    </rect>
+    <line class="cls-4" x1="1023.5" y1="624.28" x2="1023.5" y2="633.05">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="3s"
+                          values="0,15;0,-15;0,15"
+                          repeatCount="indefinite"/>
+        
+    </line>
+    <line class="cls-4" x1="1023.5" y1="638.68" x2="1023.5" y2="643.06">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="3s"
+                          values="0,15;0,-15;0,15"
+                          repeatCount="indefinite"/>
+        
+    </line>
+    
+    
+    
+    
+    <rect class="cls-1" x="699.55" y="67.44" width="21.91" height="21.91" rx="3.36" ry="3.36">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="5s"
+                          values="0,12;0,-12;0,12"
+                          repeatCount="indefinite"/>
+        
+    </rect>
+    <path class="cls-2" d="M699.55,78.08h21.91a0,0,0,0,1,0,0v7.63a3.63,3.63,0,0,1-3.63,3.63H703.18a3.63,3.63,0,0,1-3.63-3.63V78.08A0,0,0,0,1,699.55,78.08Z">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="5s"
+                          values="0,12;0,-12;0,12"
+                          repeatCount="indefinite"/>
+        
+    </path>
+    <rect class="cls-3" x="699.55" y="67.44" width="21.91" height="21.91" rx="3.36" ry="3.36">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="5s"
+                          values="0,12;0,-12;0,12"
+                          repeatCount="indefinite"/>
+        
+    </rect>
+    <line class="cls-4" x1="710.5" y1="90.28" x2="710.5" y2="99.05">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="5s"
+                          values="0,12;0,-12;0,12"
+                          repeatCount="indefinite"/>
+        
+    </line>
+    <line class="cls-4" x1="710.5" y1="104.68" x2="710.5" y2="109.06">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="5s"
+                          values="0,12;0,-12;0,12"
+                          repeatCount="indefinite"/>
+        
+    </line>
+    
+    
+    
+    
+    
+    
+    <rect class="cls-1" x="801.55" y="471.44" width="21.91" height="21.91" rx="3.36" ry="3.36">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="13s"
+                          values="0,20;0,-20;0,20"
+                          repeatCount="indefinite"/>
+        
+    </rect>
+    <path class="cls-2" d="M801.55,482.08h21.91a0,0,0,0,1,0,0v7.63a3.63,3.63,0,0,1-3.63,3.63H805.18a3.63,3.63,0,0,1-3.63-3.63v-7.63A0,0,0,0,1,801.55,482.08Z">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="13s"
+                          values="0,20;0,-20;0,20"
+                          repeatCount="indefinite"/>
+        
+    </path>
+    <rect class="cls-3" x="801.55" y="471.44" width="21.91" height="21.91" rx="3.36" ry="3.36">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="13s"
+                          values="0,20;0,-20;0,20"
+                          repeatCount="indefinite"/>
+        
+    </rect>
+    <line class="cls-4" x1="812.5" y1="494.28" x2="812.5" y2="503.05">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="13s"
+                          values="0,20;0,-20;0,20"
+                          repeatCount="indefinite"/>
+        
+    </line>
+    <line class="cls-4" x1="812.5" y1="508.68" x2="812.5" y2="513.06">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="13s"
+                          values="0,20;0,-20;0,20"
+                          repeatCount="indefinite"/>
+        
+    </line>
+    
+    
+    
+    
+    <rect class="cls-1" x="474.55" y="626.44" width="21.91" height="21.91" rx="3.36" ry="3.36">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="7s"
+                          values="0,30;0,-30;0,30"
+                          repeatCount="indefinite"/>
+        
+    </rect>
+    <path class="cls-2" d="M474.55,637.08h21.91a0,0,0,0,1,0,0v7.63a3.63,3.63,0,0,1-3.63,3.63H478.18a3.63,3.63,0,0,1-3.63-3.63v-7.63A0,0,0,0,1,474.55,637.08Z">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="7s"
+                          values="0,30;0,-30;0,30"
+                          repeatCount="indefinite"/>
+        
+    </path>
+    <rect class="cls-3" x="474.55" y="626.44" width="21.91" height="21.91" rx="3.36" ry="3.36">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="7s"
+                          values="0,30;0,-30;0,30"
+                          repeatCount="indefinite"/>
+        
+    </rect>
+    <line class="cls-4" x1="485.5" y1="649.28" x2="485.5" y2="658.05">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="7s"
+                          values="0,30;0,-30;0,30"
+                          repeatCount="indefinite"/>
+        
+    </line>
+    <line class="cls-4" x1="485.5" y1="663.68" x2="485.5" y2="668.06">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="7s"
+                          values="0,30;0,-30;0,30"
+                          repeatCount="indefinite"/>
+        
+    </line>
+    
+    
+    
+    
+    <rect class="cls-1" x="240.55" y="78.44" width="21.91" height="21.91" rx="3.36" ry="3.36">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="13s"
+                          values="0,20;0,-20;0,20"
+                          repeatCount="indefinite"/>
+        
+    </rect>
+    <path class="cls-2" d="M240.55,89.08h21.91a0,0,0,0,1,0,0v7.63a3.63,3.63,0,0,1-3.63,3.63H244.18a3.63,3.63,0,0,1-3.63-3.63V89.08a0,0,0,0,1,0,0Z">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="13s"
+                          values="0,20;0,-20;0,20"
+                          repeatCount="indefinite"/>
+        
+    </path>
+    <rect class="cls-3" x="240.55" y="78.44" width="21.91" height="21.91" rx="3.36" ry="3.36">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="13s"
+                          values="0,20;0,-20;0,20"
+                          repeatCount="indefinite"/>
+        
+    </rect>
+    <line class="cls-4" x1="251.5" y1="101.28" x2="251.5" y2="110.05">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="13s"
+                          values="0,20;0,-20;0,20"
+                          repeatCount="indefinite"/>
+        
+    </line>
+    <line class="cls-4" x1="251.5" y1="115.68" x2="251.5" y2="120.06">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="13s"
+                          values="0,20;0,-20;0,20"
+                          repeatCount="indefinite"/>
+        
+    </line>
+    
+    
+    
+    
+    
+    <rect class="cls-1" x="362.55" y="350.44" width="21.91" height="21.91" rx="3.36" ry="3.36">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="3s"
+                          values="0,15;0,-15;0,15"
+                          repeatCount="indefinite"/>
+        
+    </rect>
+    <path class="cls-2" d="M362.55,361.08h21.91a0,0,0,0,1,0,0v7.63a3.63,3.63,0,0,1-3.63,3.63H366.18a3.63,3.63,0,0,1-3.63-3.63v-7.63A0,0,0,0,1,362.55,361.08Z">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="3s"
+                          values="0,15;0,-15;0,15"
+                          repeatCount="indefinite"/>
+        
+    </path>
+    <rect class="cls-3" x="362.55" y="350.44" width="21.91" height="21.91" rx="3.36" ry="3.36">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="3s"
+                          values="0,15;0,-15;0,15"
+                          repeatCount="indefinite"/>
+        
+    </rect>
+    <line class="cls-4" x1="373.5" y1="373.28" x2="373.5" y2="382.05">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="3s"
+                          values="0,15;0,-15;0,15"
+                          repeatCount="indefinite"/>
+        
+    </line>
+    <line class="cls-4" x1="373.5" y1="387.68" x2="373.5" y2="392.06">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="3s"
+                          values="0,15;0,-15;0,15"
+                          repeatCount="indefinite"/>
+        
+    </line>
+    
+    
+    
+    
+    
+    <rect class="cls-1" x="80.55" y="259.44" width="21.91" height="21.91" rx="3.36" ry="3.36">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="7s"
+                          values="0,30;0,-30;0,30"
+                          repeatCount="indefinite"/>
+        
+    </rect>
+    <path class="cls-2" d="M80.55,270.08h21.91a0,0,0,0,1,0,0v7.63a3.63,3.63,0,0,1-3.63,3.63H84.18a3.63,3.63,0,0,1-3.63-3.63v-7.63A0,0,0,0,1,80.55,270.08Z">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="7s"
+                          values="0,30;0,-30;0,30"
+                          repeatCount="indefinite"/>
+        
+    </path>
+    <rect class="cls-3" x="80.55" y="259.44" width="21.91" height="21.91" rx="3.36" ry="3.36">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="7s"
+                          values="0,30;0,-30;0,30"
+                          repeatCount="indefinite"/>
+        
+    </rect>
+    <line class="cls-4" x1="91.5" y1="282.28" x2="91.5" y2="291.05">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="7s"
+                          values="0,30;0,-30;0,30"
+                          repeatCount="indefinite"/>
+        
+    </line>
+    <line class="cls-4" x1="91.5" y1="296.68" x2="91.5" y2="301.06">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="7s"
+                          values="0,30;0,-30;0,30"
+                          repeatCount="indefinite"/>
+        
+    </line>
+    
+    
+    <rect class="cls-1" x="154.55" y="529.44" width="21.91" height="21.91" rx="3.36" ry="3.36">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="5s"
+                          values="0,12;0,-12;0,12"
+                          repeatCount="indefinite"/>
+        
+    </rect>
+    <path class="cls-2" d="M154.55,540.08h21.91a0,0,0,0,1,0,0v7.63a3.63,3.63,0,0,1-3.63,3.63H158.18a3.63,3.63,0,0,1-3.63-3.63v-7.63A0,0,0,0,1,154.55,540.08Z">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="5s"
+                          values="0,12;0,-12;0,12"
+                          repeatCount="indefinite"/>
+        
+    </path>
+    <rect class="cls-3" x="154.55" y="529.44" width="21.91" height="21.91" rx="3.36" ry="3.36">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="5s"
+                          values="0,12;0,-12;0,12"
+                          repeatCount="indefinite"/>
+        
+    </rect>
+    <line class="cls-4" x1="165.5" y1="552.28" x2="165.5" y2="561.05">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="5s"
+                          values="0,12;0,-12;0,12"
+                          repeatCount="indefinite"/>
+        
+    </line>
+    <line class="cls-4" x1="165.5" y1="566.68" x2="165.5" y2="571.06">
+        
+        <animateTransform id="ad"
+                          attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          dur="5s"
+                          values="0,12;0,-12;0,12"
+                          repeatCount="indefinite"/>
+        
+    </line>
+</svg>

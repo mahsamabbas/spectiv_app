@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Spectiv Apply</title>
+    <link rel="shortcut icon" href="static/images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="static/images/favicon.ico" type="image/x-icon">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+  </head>
+  <body>
+    <div>
+      <h1>Spectiv Apply to become a Video Creator</h1>
+        <form id="apply" onsubmit="submitApplication(event);">
+          <div>
+            <p>What technologies (hardware/software) do you use to produce your VR content?</p>
+            <textarea id="technology" autofocus="autofocus" placeholder="Enter your response here" type="text" name="technology"></textarea>
+          </div>
+          <div>
+            <p>Have you uploaded 360-video content on any other platforms?</p>
+            <input id="yes" type="radio" name="yesNo" />
+            <label for="yes">Yes</label>
+            <input id="no" type="radio" name="yesNo" />
+            <label for="no">No</label>
+          </div>
+          <div>
+            <p>If the answer was yes please share with us a link to one of your 360-video contributions.</p>
+            <p>If the answer was no please briefly explain your background and goals as a VR content publisher.</p>
+            <textarea id="explain" placeholder="Enter your response here" type="text" name="explain"></textarea>
+          </div>
+          <button id="submit-btn" type="submit">Submit</button>
+        </form>
+    </div>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="/static/scripts/apply.js"></script>
+  </body>
+</html>

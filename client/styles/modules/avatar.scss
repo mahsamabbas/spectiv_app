@@ -1,0 +1,25 @@
+.avatar {
+  height: 42px;
+  width: 42px;
+  border-radius: 50%;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  background-color: #686578;
+  display: block;
+}
+
+.no-avatar {
+  height: 42px;
+  width: 42px;
+  background-color: #686578;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #4EBD94;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.12) 0px 1px 2px;
+  font-size: 16px;
+  text-decoration: none;
+}

@@ -1,0 +1,101 @@
+section#subscription-page {
+  padding-top: 3%;
+  padding-left: 10%;
+  padding-right: 10%;
+  @media #{$screen-small} {
+    padding-left: 4%;
+    padding-right: 4%;
+  }
+  .no-channels {
+    text-align: center;
+    height: 10%;
+    padding-top: 10px;
+    padding-bottom: 30px;
+    .home-btn {
+      cursor: pointer;
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      background: #4EBD94;
+      font-size: 14px;
+      font-family: 'HKNova-light', sans-serif;
+      transition: all .15s ease-in-out;
+      &:focus {
+        outline: none;
+      }
+      &:hover {
+        background: #41a681;
+      }
+    }
+  }
+  a {
+    text-decoration: none;
+    color: black;
+  }
+  .subscription-list-item {
+    display: flex;
+    justify-content: space-between;
+    height: 150px;
+    margin-bottom: 30px;
+    @media #{$screen-small} {
+      height: 60px;
+      margin-bottom: 10px;
+    }
+    .left-wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .right-wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: 60%;
+      @media #{$screen-small} {
+        width: 45%;
+      }
+      .channel-name {
+        font-size: 20px;
+        @media #{$screen-small} {
+          font-size: 15px;
+        }
+      }
+      .channel-info {
+        margin-top: 4px;
+        font-size: 15px;
+        margin-bottom: 4px;
+        @media #{$screen-small} {
+          display: none;
+        }
+      }
+      .channel-desc {
+        color: grey;
+        @media #{$screen-small} {
+          display: none;
+        }
+      }
+    }
+    .button-wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: 13%;
+      @media #{$screen-small} {
+        width: 28%;
+      }
+      .sub-btn {
+        @media #{$screen-small} {
+          font-size: 11px;
+          padding: 10px 12px;
+        }
+      }
+      .subbed-btn {
+        @media #{$screen-small} {
+          font-size: 11px;
+          padding: 10px 12px;
+        }
+      }
+    }
+  }
+}

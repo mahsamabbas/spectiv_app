@@ -1,0 +1,25 @@
+div.page-loading {
+  height: calc(100% - 70px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  // animation: fadeIn .15s ease-in-out;
+  img {
+    width: 56px;
+    height: 56px;
+  }
+  h2 {
+    color: rgba(0,0,0, .50);
+  }
+}
+
+// @keyframes fadeIn {
+  // 0% {
+    // opacity: 0;
+  // }
+//
+  // 100% {
+    // opacity: 1;
+  // }
+// }

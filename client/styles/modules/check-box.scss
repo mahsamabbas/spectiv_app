@@ -1,0 +1,24 @@
+.check-box-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  .check-box {
+    height: 12px;
+    width: 12px;
+    background: #EEEEEE;
+    border: 1px solid rgba(0,0,0, .12);
+    transition: all .09s ease-in-out;
+    margin-right: 6px;
+    &.active {
+      background: #4EBD94;
+      border: 1px solid #4EBD94;
+    }
+  }
+  span {
+    font-size: 14px;
+    color: #383838;
+    margin-right: 16px;
+    line-height: 1;
+  }
+}
