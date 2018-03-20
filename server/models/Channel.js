@@ -30,11 +30,11 @@ export default (sequelize, DataTypes) => {
   return Channel;
 };
 
-exports.getChannel = function(req, res){
+exports.getChannel = function(user, res){
   let userId;
-  if (req.user) {
+  if (user) {
     // Set id if user is logged in.
-    userId = req.user.id;
+    userId = user.id;
   }
 
   const channelURL = req.params.channelURL
@@ -129,16 +129,11 @@ exports.getChannel = function(req, res){
     });
 };
 
-exports.myChannel = function(req, res){
-  if (!req.user) {
-    // Check if user is logged in
-    return res.status(401).json({
-      message: "Channel Not Found"
-    });
-  }
+exports.myChannel = function(user){
 
+var a = new Promise(function(resolve,reject){
   db.Channel.findOne({
-    where: { userId: req.user.id },
+    where: { userId: user.id },
     attributes: {
       exclude: ["createdAt", "updatedAt"]
     },
@@ -158,41 +153,52 @@ exports.myChannel = function(req, res){
         order: [["createdAt", "DESC"]]
       }
     ]
-  })
-    .then(channel => {
-      if (!channel) {
-        return res.status(404).json({
-          message: "You do not have a channel."
-        });
-      }
+  }).then(function(channel){
+    if(channel){
+      //console.log(channel);
+     resolve(channel);
+    }else{
+      //reject({message: "You do not have a channel."});
+      console.log("channel not found");
+    }
+  }).catch(function(err){
+    reject(err);
+  });
+});
 
-      db.User.findOne({
-        where: {
-          id: channel.userId
-        },
-        attributes: ["avatarPath"]
-      })
-        .then(() => {
-          // TODO - find out why userAvatar is unused here ... clearly there was some intent
-          return res.status(200).json({
-            channel,
-            user: req.user
-          });
-        })
-        .catch(err => {
-          console.log(err);
-          return res.status(500).json({ err });
-        });
+var b = a.then(function(channel){
+
+  return new Promise(function(resolve, reject){
+    db.User.findOne({
+      where: {
+        id: channel.userId
+      },
+      attributes: ["avatarPath"]
+    }).then(function(user){
+      //console.log(user);
+      resolve(user);
+    }).catch(function(err){
+      reject(err);
     })
-    .catch(err => {
-      console.log(err);
-      return res.status(500).json({ err });
-    });
-};
+  })
+});
 
-exports.createChannel = function(req, res){
-  const { id } = req.user;
-  const { name, desc, businessEmail, categories, color } = req.body;
+return Promise.all([a,b])
+.then(function([channel, user]){
+  console.log(user);
+  var data = {
+    channel,
+    user: user
+  }
+  return data;
+  
+}).catch( function(err){
+})
+}
+
+exports.createChannel = function(user,body,res){
+  const { id } = user;
+  const { name, desc, businessEmail, categories, color } = body;
   const channelURL = name
     .toLowerCase()
     .trim()
@@ -262,8 +268,8 @@ exports.createChannel = function(req, res){
     });
 };
 
-exports.updateChannel = function (req, res){
-  const { id, name, desc, businessEmail, color, searchId } = req.body;
+exports.updateChannel = function (body, res){
+  const { id, name, desc, businessEmail, color, searchId } = body;
   const channelURL = name
     .toLowerCase()
     .trim()
@@ -323,66 +329,154 @@ exports.updateChannel = function (req, res){
     })
     .catch(err => res.status(500).json({ err }));
 };
-exports.getAllFeatured = function(req,res){
-  db.Channel.findAll({
-    where: { isFeatured: true },
-    group: ["Channel.id", "User.id"],
-    attributes: [
-      "id",
-      "name",
-      "desc",
-      "userId",
-      "color",
-      "channelURL",
-      [
-        db.sequelize.fn("COUNT", db.sequelize.col("UserSubscriptions.id")),
-        "subscribers"
-      ]
-    ],
-    include: [
-      {
-        model: db.User,
-        attributes: ["avatarPath"]
-      },
-      {
-        model: db.UserSubscription,
-        duplicating: false,
-        attributes: []
-      }
-    ],
-    limit: 4
-  })
-    .then(channels => {
-      return res.status(200).json({
-        channels,
-        success: true
-      });
+exports.getAllFeatured = function(){
+  return new Promise(function(resolve,reject){
+    
+    db.Channel.findAll({
+      where: { isFeatured: true },
+      group: ["Channel.id", "User.id"],
+      attributes: [
+        "id",
+        "name",
+        "desc",
+        "userId",
+        "color",
+        "channelURL",
+        [
+          db.sequelize.fn("COUNT", db.sequelize.col("UserSubscriptions.id")),
+          "subscribers"
+        ]
+      ],
+      include: [
+        {
+          model: db.User,
+          attributes: ["avatarPath"]
+        },
+        {
+          model: db.UserSubscription,
+          duplicating: false,
+          attributes: []
+        }
+      ],
+      limit: 4
+    }).then(function (channels) {
+      resolve(channels,{success:true});
+    }).catch(function(err){
+      reject(err);
     })
-    .catch(err => {
-      console.log(err);
-      return res.status(500).json({
-        err
-      });
-    });
-};
-
-
-var usama = {
-  test1:function(){
-    console.log("test1");
+  });
   }
-};
+// exports.getAllFeatured = function(){
+//   db.Channel.findAll({
+//     where: { isFeatured: true },
+//     group: ["Channel.id", "User.id"],
+//     attributes: [
+//       "id",
+//       "name",
+//       "desc",
+//       "userId",
+//       "color",
+//       "channelURL",
+//       [
+//         db.sequelize.fn("COUNT", db.sequelize.col("UserSubscriptions.id")),
+//         "subscribers"
+//       ]
+//     ],
+//     include: [
+//       {
+//         model: db.User,
+//         attributes: ["avatarPath"]
+//       },
+//       {
+//         model: db.UserSubscription,
+//         duplicating: false,
+//         attributes: []
+//       }
+//     ],
+//     limit: 4
+//   })
+//     .then(channels => {
+//       return res.status(200).json({
+//         channels,
+//         success: true
+//       });
+//       // var result = res.status(200).json({
+//       //   channels,
+//       //   success: true
+//       // });
+//       // return callback(false,result);
+//     })
+//     .catch(err => {
+//       console.log(err);
+//       return res.status(500).json({
+//         err
+//       });
+//       //return callback(true,false);
+//     });
+// };
 
-//module.exports = () => {return {}};
+// exports.myChannel = function(user, res){
+//   if (!user) {
+//     // Check if user is logged in
+//     return res.status(401).json({
+//       message: "Channel Not Found"
+//     });
+//   }
 
-//module.exports = usama;
+//   db.Channel.findOne({
+//     where: { userId: user.id },
+//     attributes: {
+//       exclude: ["createdAt", "updatedAt"]
+//     },
+//     include: [
+//       {
+//         model: db.Video,
+//         limit: 7,
+//         where: {
+//           accessibility: 1,
+//           pathToOriginal: {
+//             $ne: null
+//           },
+//           isDeleted: {
+//             $ne: true
+//           }
+//         },
+//         order: [["createdAt", "DESC"]]
+//       }
+//     ]
+//   })
+//     .then(channel => {
+//       if (!channel) {
+//         return res.status(404).json({
+//           message: "You do not have a channel."
+//         });
+//       }
 
-exports.hi = function(){
-  console.log("hi");
-}
+//       db.User.findOne({
+//         where: {
+//           id: channel.userId
+//         },
+//         attributes: ["avatarPath"]
+//       })
+//         .then(() => {
+//           // TODO - find out why userAvatar is unused here ... clearly there was some intent
+//           return res.status(200).json({
+//             channel,
+//             user: user
+//           });
+//         })
+//         .catch(err => {
+//           console.log(err);
+//           return res.status(500).json({ err });
+//         });
+//     })
+//     .catch(err => {
+//       console.log(err);
+//       return res.status(500).json({ err });
+//     });
+// };
 
-exports.test = function(){
-  console.log("test");
-}
+
+
 
 
