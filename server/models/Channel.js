@@ -30,14 +30,14 @@ export default (sequelize, DataTypes) => {
   return Channel;
 };
 
-exports.getChannel = function(user, res){
+exports.getChannel = function(user, channelUrl, res){
   let userId;
   if (user) {
     // Set id if user is logged in.
     userId = user.id;
   }
 
-  const channelURL = req.params.channelURL
+  const channelURL = channelUrl
     .toLowerCase()
     .trim()
     .replace(/\s+/g, "_");
@@ -128,6 +128,142 @@ exports.getChannel = function(user, res){
       return res.status(500).json({ err });
     });
 };
+exports.getChannel1 = function(user, channelUrl, res){
+  let userId;
+  if (user) {
+    // Set id if user is logged in.
+    userId = user.id;
+  }
+
+  const channelURL = channelUrl
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "_");
+
+    var a = new Promise(function(resolve, reject){
+      db.Channel.findOne({
+        where: {
+          channelURL
+        },
+        include: [
+          {
+            where: {
+              accessibility: 1,
+              pathToOriginal: {
+                $ne: null
+              },
+              isDeleted: {
+                $ne: true
+              }
+            },
+            model: db.Video,
+            limit: 12,
+            order: [["createdAt", "DESC"]]
+          }
+        ],
+        attributes: [
+          "id",
+          "name",
+          "channelURL",
+          "desc",
+          "businessEmail",
+          "userId",
+          "searchId",
+          "color"
+        ]
+      }).then(function(channel){
+        if (!channel) {
+          resolve({message: "channel not found"});
+        }else{
+          resolve(channel);
+        }
+        
+      }).catch(function(err){
+        reject({message: "channel not found"});
+      })
+    });
+
+    var b =  a.then(function(channel){
+      return new Promise(function(resolve, reject){
+        if(!channel.message){
+          db.User.findOne({
+            where: { id: channel.userId },
+            attributes: ["avatarPath"]
+          }).then(function(userAvatar){
+             resolve([userAvatar, channel]);
+          }).catch(function(err){
+            reject(err);
+          })
+        }else{
+          resolve(null);
+        }
+      });
+    });
+
+    var c = b.then(function([userAvatar, channel]){
+      channel.dataValues.avatarPath = userAvatar.avatarPath;
+      return new Promise(function(resolve, reject){
+        if(!channel.message){
+          if(userId){
+            db.UserSubscription.findOne({
+              where: { userId, channelId: channel.id }
+            }).then(function(userSub){
+              let isUserChannel = false;
+              let isSubscribed = false;
+              if (channel.userId === userId) isUserChannel = true;
+              if (userSub) isSubscribed = true;
+              resolve([channel, isUserChannel, isSubscribed, count=null]);
+            }).catch(function(err){
+              reject(err);
+            })
+          }else{
+            db.UserSubscription.count({
+              where: { channelId: channel.id }
+            }).then(function(count){
+              resolve([channel, isUserChannel=null, isSubscribed=null, count]);
+            }).catch(function(err){
+              reject(err);
+            })
+          }
+        }else{
+          resolve(null);
+        }
+      });
+    });
+
+    var d = c.then(function([channel, isUserChannel, isSubscribed, count]){
+      return new Promise(function(resolve, reject){
+        if(!channel.message){
+          db.UserSubscription.count({
+            where: { channelId: channel.id }
+          }).then(function(count){
+            if(isUserChannel && isSubscribed && !count){
+              resolve([channel,isUserChannel,isSubscribed,count]);
+            }else{
+              resolve([channel, isUserChannel, isSubscribed, count]);
+            }
+          }).catch(function(err){
+            reject(err);
+          });
+        }else{
+          resolve(null);
+        }
+      });
+    });
+
+    return Promise.all([a,b])
+    .then(function([channel, channelb]){
+      console.log("a");
+      console.log(channel);
+      //console.log("b: "+b);
+      //console.log("c: "+c);
+      //console.log("d: "+d);
+      return channel;
+    })
+    .catch(function(err){
+      return err;
+    })
+};
 
 exports.myChannel = function(user){
 
@@ -196,7 +332,7 @@ return Promise.all([a,b])
 })
 }
 
-exports.createChannel = function(user,body,res){
+exports.createChannel = function(user,body){
   const { id } = user;
   const { name, desc, businessEmail, categories, color } = body;
   const channelURL = name
@@ -204,20 +340,26 @@ exports.createChannel = function(user,body,res){
     .trim()
     .replace(/\s+/g, "_");
 
-  db.Channel.create({
-    userId: id,
-    name,
-    channelURL,
-    desc,
-    businessEmail,
-    color
-  })
-    .then(channel => {
-      // ADD NEW CHANNEL TO THE SEARCH INDEX
-      db.User.findOne({
-        where: { id }
+    var a = new Promise(function(resolve, reject){
+      db.Channel.create({
+        userId: id,
+        name,
+        channelURL,
+        desc,
+        businessEmail,
+        color
+      }).then(function(channel){
+        resolve(channel);
+      }).catch( function(err){
+        reject(err);
       })
-        .then(user => {
+    });
+
+    var b = a.then(function(channel){
+      return new Promise(function(resolve, reject){
+        db.User.findOne({
+          where: { id }
+        }).then(function(user){
           let channelObj;
           if (user.avatarPath !== null) {
             channelObj = {
@@ -252,28 +394,293 @@ exports.createChannel = function(user,body,res){
                 searchId: channelContent.objectID
               });
               console.log("Channel was added to the index");
+              resolve(channel);
             });
           }
+        }).catch(function(err){
+          reject(err);
         })
-        .catch(err => {
-          console.error(err);
-        });
-
-      createCategories(categories, channel.id)
-        .then(() => res.status(200).json({ channel }))
-        .catch(err => res.status(500).json(err));
-    })
-    .catch(err => {
-      return res.status(500).json({ err });
+      });
     });
+
+    var c = b.then(function(channel){
+      return new Promise(function(resolve, reject){
+        createCategories(categories, channel.id)
+        .then(function(channel){
+          resolve(channel);
+        }).catch(function(err){
+          reject(err);
+        });
+      });
+    });
+
+    return Promise.all([a,b,c])
+    .then(function([channel1, channel2, channel3]){
+      console.log(channel3);
+      var data = {
+        channel3
+      }
+      return data;
+    }).catch(function(err){});
+
+  // db.Channel.create({
+  //   userId: id,
+  //   name,
+  //   channelURL,
+  //   desc,
+  //   businessEmail,
+  //   color
+  // })
+  //   .then(channel => {
+  //     // ADD NEW CHANNEL TO THE SEARCH INDEX
+  //     db.User.findOne({
+  //       where: { id }
+  //     })
+  //       .then(user => {
+  //         let channelObj;
+  //         if (user.avatarPath !== null) {
+  //           channelObj = {
+  //             id: channel.id,
+  //             name: channel.name,
+  //             channelURL: channel.channelURL,
+  //             desc: channel.desc,
+  //             subscribers: 0,
+  //             avatarPath: user.avatarPath,
+  //             channelColor: channel.color,
+  //             videos: [],
+  //             createdAt: Date.now()
+  //           };
+  //         } else {
+  //           channelObj = {
+  //             id: channel.id,
+  //             name: channel.name,
+  //             channelURL: channel.channelURL,
+  //             desc: channel.desc,
+  //             subscribers: 0,
+  //             channelColor: channel.color,
+  //             videos: [],
+  //             createdAt: Date.now()
+  //           };
+  //         }
+  //         if (process.env.NODE_ENV === 'production') {
+  //           channelIndex.addObject(channelObj, (error, channelContent) => {
+  //             if (error) {
+  //               console.error(error);
+  //             }
+  //             channel.updateAttributes({
+  //               searchId: channelContent.objectID
+  //             });
+  //             console.log("Channel was added to the index");
+  //           });
+  //         }
+  //       })
+  //       .catch(err => {
+  //         console.error(err);
+  //       });
+
+  //     createCategories(categories, channel.id)
+  //       .then(() => res.status(200).json({ channel }))
+  //       .catch(err => res.status(500).json(err));
+  //   })
+  //   .catch(err => {
+  //     return res.status(500).json({ err });
+  //   });
 };
 
+// exports.createChannel = function(user,body,res){
+//   const { id } = user;
+//   const { name, desc, businessEmail, categories, color } = body;
+//   const channelURL = name
+//     .toLowerCase()
+//     .trim()
+//     .replace(/\s+/g, "_");
+
+//   db.Channel.create({
+//     userId: id,
+//     name,
+//     channelURL,
+//     desc,
+//     businessEmail,
+//     color
+//   })
+//     .then(channel => {
+//       // ADD NEW CHANNEL TO THE SEARCH INDEX
+//       db.User.findOne({
+//         where: { id }
+//       })
+//         .then(user => {
+//           let channelObj;
+//           if (user.avatarPath !== null) {
+//             channelObj = {
+//               id: channel.id,
+//               name: channel.name,
+//               channelURL: channel.channelURL,
+//               desc: channel.desc,
+//               subscribers: 0,
+//               avatarPath: user.avatarPath,
+//               channelColor: channel.color,
+//               videos: [],
+//               createdAt: Date.now()
+//             };
+//           } else {
+//             channelObj = {
+//               id: channel.id,
+//               name: channel.name,
+//               channelURL: channel.channelURL,
+//               desc: channel.desc,
+//               subscribers: 0,
+//               channelColor: channel.color,
+//               videos: [],
+//               createdAt: Date.now()
+//             };
+//           }
+//           if (process.env.NODE_ENV === 'production') {
+//             channelIndex.addObject(channelObj, (error, channelContent) => {
+//               if (error) {
+//                 console.error(error);
+//               }
+//               channel.updateAttributes({
+//                 searchId: channelContent.objectID
+//               });
+//               console.log("Channel was added to the index");
+//             });
+//           }
+//         })
+//         .catch(err => {
+//           console.error(err);
+//         });
+
+//       createCategories(categories, channel.id)
+//         .then(() => res.status(200).json({ channel }))
+//         .catch(err => res.status(500).json(err));
+//     })
+//     .catch(err => {
+//       return res.status(500).json({ err });
+//     });
+// };
+
+// exports.updateChannel = function (body, res){
+//   const { id, name, desc, businessEmail, color, searchId } = body;
+//   const channelURL = name
+//     .toLowerCase()
+//     .trim()
+//     .replace(/\s+/g, "_");
+
+//   db.Channel.update(
+//     {
+//       name,
+//       channelURL,
+//       desc,
+//       businessEmail,
+//       color
+//     },
+//     { where: { id } }
+//   )
+//     .then(() => {
+//       // UPDATE CHANNEL IN THE SEARCH INDEX
+//       if (searchId && process.env.NODE_ENV === 'production') {
+//         channelIndex.partialUpdateObject(
+//           {
+//             name,
+//             desc,
+//             channelColor: color,
+//             objectID: searchId
+//           },
+//           err => {
+//             if (err) {
+//               console.error(err);
+//             } else {
+//               console.log("Channel info in search index is updated");
+//               channelIndex.getObject(searchId, (err2, channelContent) => {
+//                 if (err2) {
+//                   console.error(err2);
+//                 }
+//                 const channelVideos = channelContent.videos.map(vidId => {
+//                   return {
+//                     channelName: name,
+//                     channelColor: color,
+//                     channelUrl: channelURL,
+//                     objectID: vidId
+//                   };
+//                 });
+//                 videoIndex.partialUpdateObjects(channelVideos, err3 => {
+//                   if (err3) {
+//                     console.error(err3);
+//                   } else {
+//                     console.log("Channel info on videos are updated");
+//                   }
+//                 });
+//               });
+//             }
+//           }
+//         );
+//       }
+
+//       return res.status(200).json({ msg: "success" });
+//     })
+//     .catch(err => res.status(500).json({ err }));
+// };
 exports.updateChannel = function (body, res){
   const { id, name, desc, businessEmail, color, searchId } = body;
   const channelURL = name
     .toLowerCase()
     .trim()
     .replace(/\s+/g, "_");
+
+    return new Promise(function(resolve, reject){
+      db.Channel.update(
+        {
+          name,
+          channelURL,
+          desc,
+          businessEmail,
+          color
+        },
+        { where: { id } }
+      ).then(function(){
+        if (searchId && process.env.NODE_ENV === 'production') {
+          channelIndex.partialUpdateObject(
+            {
+              name,
+              desc,
+              channelColor: color,
+              objectID: searchId
+            },
+            err => {
+              if (err) {
+                console.error(err);
+              } else {
+                console.log("Channel info in search index is updated");
+                channelIndex.getObject(searchId, (err2, channelContent) => {
+                  if (err2) {
+                    console.error(err2);
+                  }
+                  const channelVideos = channelContent.videos.map(vidId => {
+                    return {
+                      channelName: name,
+                      channelColor: color,
+                      channelUrl: channelURL,
+                      objectID: vidId
+                    };
+                  });
+                  videoIndex.partialUpdateObjects(channelVideos, err3 => {
+                    if (err3) {
+                      console.error(err3);
+                    } else {
+                      console.log("Channel info on videos are updated");
+                    }
+                  });
+                });
+              }
+            }
+          );
+        }
+        // if ends
+        resolve({ msg: "success" });
+      }).catch(function(err){
+        reject(err);
+      })
+    });
 
   db.Channel.update(
     {

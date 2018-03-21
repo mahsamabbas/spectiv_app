@@ -5,7 +5,17 @@ const channelModel = require('./../models/Channel');
 const channelController = {};
 
 channelController.getChannel = (req, res) => {
-  channelModel.getChannel(req.user,res);
+  //channelModel.getChannel(req.user, req.params.channelURL, res);
+
+channelModel.getChannel1(req.user, req.params.channelURL)
+.then(function(result){
+  if(result.message){
+    res.status(404).json(result);
+  }
+}).catch(function(err){
+  console.log("in catch");
+  res.send(err);
+})
 };
 
 channelController.myChannel = (req, res) => {
@@ -29,11 +39,22 @@ channelController.myChannel = (req, res) => {
 };
 
 channelController.createChannel = (req, res) => {
-  channelModel.createChannel(req.user,req.body,res);
+  //channelModel.createChannel(req.user,req.body,res);
+  channelModel.createChannel(req.user,req.body)
+  .then(function(result){
+    res.status(200).json(result);
+  })
+  .catch(function(error){
+    res.send(error);
+  });
 };
 
 channelController.updateChannel = (req, res) => {
-  channelModel.updateChannel(req.body,res);
+  //channelModel.updateChannel(req.body,res);
+  channelModel.updateChannel(req.body)
+  .then(function(result){
+    res.status(200).json(result);
+  }).catch();
 };
 
  channelController.getAllFeatured = (req, res) => {
