@@ -25,7 +25,7 @@ channelController.getChannel = (req, res) => {
     .trim()
     .replace(/\s+/g, "_");
 
-    channelModel.verifychannel(channelURL)
+    channelModel.velidateChannel(channelURL)
     .then(function(channel){
       if(channel){
 
