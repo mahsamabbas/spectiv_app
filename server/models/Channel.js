@@ -30,7 +30,7 @@ export default (sequelize, DataTypes) => {
   return Channel;
 };
 
-exports.getDbChannel = function(channelURL){
+exports.verifychannel = function(channelURL){
 
   return new Promise(function(resolve, reject){
     db.Channel.findOne({
@@ -72,7 +72,7 @@ exports.getDbChannel = function(channelURL){
 
 }
 
-exports.userFindOne = function(userId){
+exports.findUser = function(userId){
   return new Promise(function(resolve, reject){
     db.User.findOne({
       where: { id: userId },
@@ -85,7 +85,7 @@ exports.userFindOne = function(userId){
   })
 }
 
-exports.userSubscriptionFind = function(userId, id){
+exports.userSubscription = function(userId, id){
   return new Promise(function(resolve, reject){
     db.UserSubscription.findOne({
       where: { userId, channelId: id }
@@ -109,241 +109,88 @@ exports.userSubscriptionCount = function(id){
     })
   })
 }
-exports.getChannel = function(user, channelUrl, res){
-  let userId;
-  if (user) {
-    // Set id if user is logged in.
-    userId = user.id;
-  }
 
-  const channelURL = channelUrl
+exports.getFinalChannel = function(req){
+
+  let userId;
+  if (req.user) {
+    // Set id if user is logged in.
+    userId = req.user.id;
+  }
+  const channelURL = req.params.channelURL
     .toLowerCase()
     .trim()
     .replace(/\s+/g, "_");
 
-  db.Channel.findOne({
-    where: {
-      channelURL
-    },
-    include: [
-      {
-        where: {
-          accessibility: 1,
-          pathToOriginal: {
-            $ne: null
-          },
-          isDeleted: {
-            $ne: true
-          }
-        },
-        model: db.Video,
-        limit: 12,
-        order: [["createdAt", "DESC"]]
-      }
-    ],
-    attributes: [
-      "id",
-      "name",
-      "channelURL",
-      "desc",
-      "businessEmail",
-      "userId",
-      "searchId",
-      "color"
-    ]
-  })
-    .then(channel => {
-      if (!channel) {
-        return res.status(404).json({
-          message: "Channel not found"
-        });
-      }
-      db.User.findOne({
-        where: { id: channel.userId },
-        attributes: ["avatarPath"]
-      })
-        .then(userAvatar => {
+  return new Promise(function(resolve, reject){
+
+    channelModel.verifychannel(channelURL)
+    .then(function(channel){
+      if(channel){
+  
+        channelModel.findUser(channel.userId)
+        .then(function(userAvatar){
           channel.dataValues.avatarPath = userAvatar.avatarPath;
-          if (userId) {
-            db.UserSubscription.findOne({
-              where: { userId, channelId: channel.id }
-            })
-              .then(userSub => {
+          if(userId){
+  
+            channelModel.userSubscription(userId, channel.id)
+            .then(function(userSub){
                 let isUserChannel = false;
                 let isSubscribed = false;
                 if (channel.userId === userId) isUserChannel = true;
                 if (userSub) isSubscribed = true;
-
-                db.UserSubscription.count({
-                  where: { channelId: channel.id }
-                }).then(count => {
-                  return res.status(200).json({
-                    channel,
-                    isUserChannel,
-                    isSubscribed,
-                    totalSubscriber: count
-                  });
-                });
-              })
-              .catch(err => {
-                console.log(err);
-                return res.status(500).json({ err });
-              });
-          } else {
-            db.UserSubscription.count({
-              where: { channelId: channel.id }
-            }).then(count => {
-              return res.status(200).json({ channel, totalSubscriber: count });
-            });
-          }
-        })
-        .catch(err => {
-          console.log(err);
-          return res.status(500).json({ err });
-        });
-    })
-    .catch(err => {
-      console.log(err);
-      return res.status(500).json({ err });
-    });
-};
-exports.getChannel1 = function(user, channelUrl, res){
-  let userId;
-  if (user) {
-    // Set id if user is logged in.
-    userId = user.id;
-  }
-
-  const channelURL = channelUrl
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, "_");
-
-    var a = new Promise(function(resolve, reject){
-      db.Channel.findOne({
-        where: {
-          channelURL
-        },
-        include: [
-          {
-            where: {
-              accessibility: 1,
-              pathToOriginal: {
-                $ne: null
-              },
-              isDeleted: {
-                $ne: true
-              }
-            },
-            model: db.Video,
-            limit: 12,
-            order: [["createdAt", "DESC"]]
-          }
-        ],
-        attributes: [
-          "id",
-          "name",
-          "channelURL",
-          "desc",
-          "businessEmail",
-          "userId",
-          "searchId",
-          "color"
-        ]
-      }).then(function(channel){
-        if (!channel) {
-          resolve({message: "channel not found"});
-        }else{
-          resolve(channel);
-        }
-        
-      }).catch(function(err){
-        reject({message: "channel not found"});
-      })
-    });
-
-    var b =  a.then(function(channel){
-      return new Promise(function(resolve, reject){
-        if(!channel.message){
-          db.User.findOne({
-            where: { id: channel.userId },
-            attributes: ["avatarPath"]
-          }).then(function(userAvatar){
-             resolve([userAvatar, channel]);
-          }).catch(function(err){
-            reject(err);
-          })
-        }else{
-          resolve(null);
-        }
-      });
-    });
-
-    var c = b.then(function([userAvatar, channel]){
-      channel.dataValues.avatarPath = userAvatar.avatarPath;
-      return new Promise(function(resolve, reject){
-        if(!channel.message){
-          if(userId){
-            db.UserSubscription.findOne({
-              where: { userId, channelId: channel.id }
-            }).then(function(userSub){
-              let isUserChannel = false;
-              let isSubscribed = false;
-              if (channel.userId === userId) isUserChannel = true;
-              if (userSub) isSubscribed = true;
-              resolve([channel, isUserChannel, isSubscribed, count=null]);
+  
+                channelModel.userSubscriptionCount(channel.id)
+                .then(function(count){
+                  
+                  resolve({channel, isUserChannel, isSubscribed, totalSubscriber: count});
+                  // return res.status(200).json({
+                  //   channel,
+                  //   isUserChannel,
+                  //   isSubscribed,
+                  //   totalSubscriber: count
+                  // });
+                }).catch(function(err){
+                  //return res.status(500).json({ err });
+                  console.log("i am here 1");
+                  reject(err);
+                })
+  
             }).catch(function(err){
+              //return res.status(500).json({ err });
+              console.log("i am here 2");
               reject(err);
             })
           }else{
-            db.UserSubscription.count({
-              where: { channelId: channel.id }
-            }).then(function(count){
-              resolve([channel, isUserChannel=null, isSubscribed=null, count]);
+            channelModel.userSubscriptionCount(channel.id)
+            .then(function(count){
+              //return res.status(200).json({ channel, totalSubscriber: count });
+              resolve({ channel, totalSubscriber: count });
             }).catch(function(err){
+              //return res.status(500).json({ err });
+              console.log("i am here 3");
               reject(err);
             })
           }
-        }else{
-          resolve(null);
-        }
-      });
-    });
-
-    var d = c.then(function([channel, isUserChannel, isSubscribed, count]){
-      return new Promise(function(resolve, reject){
-        if(!channel.message){
-          db.UserSubscription.count({
-            where: { channelId: channel.id }
-          }).then(function(count){
-            if(isUserChannel && isSubscribed && !count){
-              resolve([channel,isUserChannel,isSubscribed,count]);
-            }else{
-              resolve([channel, isUserChannel, isSubscribed, count]);
-            }
-          }).catch(function(err){
-            reject(err);
-          });
-        }else{
-          resolve(null);
-        }
-      });
-    });
-
-    return Promise.all([a,b])
-    .then(function([channel, channelb]){
-      console.log("a");
-      console.log(channel);
-      //console.log("b: "+b);
-      //console.log("c: "+c);
-      //console.log("d: "+d);
-      return channel;
-    })
-    .catch(function(err){
-      return err;
-    })
-};
-
+        }).catch(function(err){
+          //return res.status(500).json({ err });
+          console.log("i am here 4");
+          reject(err);
+        })
+  
+      }else{
+        // return res.status(404).json({
+        //   message: "Channel not found"
+        // });
+      }
+  
+    }).catch(function(err){
+      //return res.status(500).json({ err });
+      console.log("i am here 5");
+      reject(err);
+    })  
+  });
+}
 exports.myChannel = function(user){
 
 var a = new Promise(function(resolve,reject){
@@ -501,204 +348,8 @@ exports.createChannel = function(user,body){
       }
       return data;
     }).catch(function(err){});
-
-  // db.Channel.create({
-  //   userId: id,
-  //   name,
-  //   channelURL,
-  //   desc,
-  //   businessEmail,
-  //   color
-  // })
-  //   .then(channel => {
-  //     // ADD NEW CHANNEL TO THE SEARCH INDEX
-  //     db.User.findOne({
-  //       where: { id }
-  //     })
-  //       .then(user => {
-  //         let channelObj;
-  //         if (user.avatarPath !== null) {
-  //           channelObj = {
-  //             id: channel.id,
-  //             name: channel.name,
-  //             channelURL: channel.channelURL,
-  //             desc: channel.desc,
-  //             subscribers: 0,
-  //             avatarPath: user.avatarPath,
-  //             channelColor: channel.color,
-  //             videos: [],
-  //             createdAt: Date.now()
-  //           };
-  //         } else {
-  //           channelObj = {
-  //             id: channel.id,
-  //             name: channel.name,
-  //             channelURL: channel.channelURL,
-  //             desc: channel.desc,
-  //             subscribers: 0,
-  //             channelColor: channel.color,
-  //             videos: [],
-  //             createdAt: Date.now()
-  //           };
-  //         }
-  //         if (process.env.NODE_ENV === 'production') {
-  //           channelIndex.addObject(channelObj, (error, channelContent) => {
-  //             if (error) {
-  //               console.error(error);
-  //             }
-  //             channel.updateAttributes({
-  //               searchId: channelContent.objectID
-  //             });
-  //             console.log("Channel was added to the index");
-  //           });
-  //         }
-  //       })
-  //       .catch(err => {
-  //         console.error(err);
-  //       });
-
-  //     createCategories(categories, channel.id)
-  //       .then(() => res.status(200).json({ channel }))
-  //       .catch(err => res.status(500).json(err));
-  //   })
-  //   .catch(err => {
-  //     return res.status(500).json({ err });
-  //   });
 };
 
-// exports.createChannel = function(user,body,res){
-//   const { id } = user;
-//   const { name, desc, businessEmail, categories, color } = body;
-//   const channelURL = name
-//     .toLowerCase()
-//     .trim()
-//     .replace(/\s+/g, "_");
-
-//   db.Channel.create({
-//     userId: id,
-//     name,
-//     channelURL,
-//     desc,
-//     businessEmail,
-//     color
-//   })
-//     .then(channel => {
-//       // ADD NEW CHANNEL TO THE SEARCH INDEX
-//       db.User.findOne({
-//         where: { id }
-//       })
-//         .then(user => {
-//           let channelObj;
-//           if (user.avatarPath !== null) {
-//             channelObj = {
-//               id: channel.id,
-//               name: channel.name,
-//               channelURL: channel.channelURL,
-//               desc: channel.desc,
-//               subscribers: 0,
-//               avatarPath: user.avatarPath,
-//               channelColor: channel.color,
-//               videos: [],
-//               createdAt: Date.now()
-//             };
-//           } else {
-//             channelObj = {
-//               id: channel.id,
-//               name: channel.name,
-//               channelURL: channel.channelURL,
-//               desc: channel.desc,
-//               subscribers: 0,
-//               channelColor: channel.color,
-//               videos: [],
-//               createdAt: Date.now()
-//             };
-//           }
-//           if (process.env.NODE_ENV === 'production') {
-//             channelIndex.addObject(channelObj, (error, channelContent) => {
-//               if (error) {
-//                 console.error(error);
-//               }
-//               channel.updateAttributes({
-//                 searchId: channelContent.objectID
-//               });
-//               console.log("Channel was added to the index");
-//             });
-//           }
-//         })
-//         .catch(err => {
-//           console.error(err);
-//         });
-
-//       createCategories(categories, channel.id)
-//         .then(() => res.status(200).json({ channel }))
-//         .catch(err => res.status(500).json(err));
-//     })
-//     .catch(err => {
-//       return res.status(500).json({ err });
-//     });
-// };
-
-// exports.updateChannel = function (body, res){
-//   const { id, name, desc, businessEmail, color, searchId } = body;
-//   const channelURL = name
-//     .toLowerCase()
-//     .trim()
-//     .replace(/\s+/g, "_");
-
-//   db.Channel.update(
-//     {
-//       name,
-//       channelURL,
-//       desc,
-//       businessEmail,
-//       color
-//     },
-//     { where: { id } }
-//   )
-//     .then(() => {
-//       // UPDATE CHANNEL IN THE SEARCH INDEX
-//       if (searchId && process.env.NODE_ENV === 'production') {
-//         channelIndex.partialUpdateObject(
-//           {
-//             name,
-//             desc,
-//             channelColor: color,
-//             objectID: searchId
-//           },
-//           err => {
-//             if (err) {
-//               console.error(err);
-//             } else {
-//               console.log("Channel info in search index is updated");
-//               channelIndex.getObject(searchId, (err2, channelContent) => {
-//                 if (err2) {
-//                   console.error(err2);
-//                 }
-//                 const channelVideos = channelContent.videos.map(vidId => {
-//                   return {
-//                     channelName: name,
-//                     channelColor: color,
-//                     channelUrl: channelURL,
-//                     objectID: vidId
-//                   };
-//                 });
-//                 videoIndex.partialUpdateObjects(channelVideos, err3 => {
-//                   if (err3) {
-//                     console.error(err3);
-//                   } else {
-//                     console.log("Channel info on videos are updated");
-//                   }
-//                 });
-//               });
-//             }
-//           }
-//         );
-//       }
-
-//       return res.status(200).json({ msg: "success" });
-//     })
-//     .catch(err => res.status(500).json({ err }));
-// };
 exports.updateChannel = function (body){
   const { id, name, desc, businessEmail, color, searchId } = body;
   const channelURL = name
@@ -798,54 +449,6 @@ exports.getAllFeatured = function(){
     })
   });
   }
-// exports.getAllFeatured = function(){
-//   db.Channel.findAll({
-//     where: { isFeatured: true },
-//     group: ["Channel.id", "User.id"],
-//     attributes: [
-//       "id",
-//       "name",
-//       "desc",
-//       "userId",
-//       "color",
-//       "channelURL",
-//       [
-//         db.sequelize.fn("COUNT", db.sequelize.col("UserSubscriptions.id")),
-//         "subscribers"
-//       ]
-//     ],
-//     include: [
-//       {
-//         model: db.User,
-//         attributes: ["avatarPath"]
-//       },
-//       {
-//         model: db.UserSubscription,
-//         duplicating: false,
-//         attributes: []
-//       }
-//     ],
-//     limit: 4
-//   })
-//     .then(channels => {
-//       return res.status(200).json({
-//         channels,
-//         success: true
-//       });
-//       // var result = res.status(200).json({
-//       //   channels,
-//       //   success: true
-//       // });
-//       // return callback(false,result);
-//     })
-//     .catch(err => {
-//       console.log(err);
-//       return res.status(500).json({
-//         err
-//       });
-//       //return callback(true,false);
-//     });
-// };
 
 // exports.myChannel = function(user, res){
 //   if (!user) {
@@ -908,7 +511,77 @@ exports.getAllFeatured = function(){
 //     });
 // };
 
+// exports.createChannel = function(user,body,res){
+//   const { id } = user;
+//   const { name, desc, businessEmail, categories, color } = body;
+//   const channelURL = name
+//     .toLowerCase()
+//     .trim()
+//     .replace(/\s+/g, "_");
 
+//   db.Channel.create({
+//     userId: id,
+//     name,
+//     channelURL,
+//     desc,
+//     businessEmail,
+//     color
+//   })
+//     .then(channel => {
+//       // ADD NEW CHANNEL TO THE SEARCH INDEX
+//       db.User.findOne({
+//         where: { id }
+//       })
+//         .then(user => {
+//           let channelObj;
+//           if (user.avatarPath !== null) {
+//             channelObj = {
+//               id: channel.id,
+//               name: channel.name,
+//               channelURL: channel.channelURL,
+//               desc: channel.desc,
+//               subscribers: 0,
+//               avatarPath: user.avatarPath,
+//               channelColor: channel.color,
+//               videos: [],
+//               createdAt: Date.now()
+//             };
+//           } else {
+//             channelObj = {
+//               id: channel.id,
+//               name: channel.name,
+//               channelURL: channel.channelURL,
+//               desc: channel.desc,
+//               subscribers: 0,
+//               channelColor: channel.color,
+//               videos: [],
+//               createdAt: Date.now()
+//             };
+//           }
+//           if (process.env.NODE_ENV === 'production') {
+//             channelIndex.addObject(channelObj, (error, channelContent) => {
+//               if (error) {
+//                 console.error(error);
+//               }
+//               channel.updateAttributes({
+//                 searchId: channelContent.objectID
+//               });
+//               console.log("Channel was added to the index");
+//             });
+//           }
+//         })
+//         .catch(err => {
+//           console.error(err);
+//         });
+
+//       createCategories(categories, channel.id)
+//         .then(() => res.status(200).json({ channel }))
+//         .catch(err => res.status(500).json(err));
+//     })
+//     .catch(err => {
+//       return res.status(500).json({ err });
+//     });
+// };
 
 
 
