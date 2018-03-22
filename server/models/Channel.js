@@ -369,88 +369,89 @@ exports.getAllFeatured = function(){
   });
   }
 
-//this is a test and it is under construction
-exports.getFinalChannel = function(req){
 
-  let userId;
-  if (req.user) {
-    // Set id if user is logged in.
-    userId = req.user.id;
-  }
-  const channelURL = req.params.channelURL
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, "_");
+  //this is a test and it is under construction
+// exports.getFinalChannel = function(req){
 
-  return new Promise(function(resolve, reject){
+//   let userId;
+//   if (req.user) {
+//     // Set id if user is logged in.
+//     userId = req.user.id;
+//   }
+//   const channelURL = req.params.channelURL
+//     .toLowerCase()
+//     .trim()
+//     .replace(/\s+/g, "_");
 
-    channelModel.velidateChannel(channelURL)
-    .then(function(channel){
-      if(channel){
+//   return new Promise(function(resolve, reject){
+
+//     channelModel.velidateChannel(channelURL)
+//     .then(function(channel){
+//       if(channel){
   
-        channelModel.findUser(channel.userId)
-        .then(function(userAvatar){
-          channel.dataValues.avatarPath = userAvatar.avatarPath;
-          if(userId){
+//         channelModel.findUser(channel.userId)
+//         .then(function(userAvatar){
+//           channel.dataValues.avatarPath = userAvatar.avatarPath;
+//           if(userId){
   
-            channelModel.userSubscription(userId, channel.id)
-            .then(function(userSub){
-                let isUserChannel = false;
-                let isSubscribed = false;
-                if (channel.userId === userId) isUserChannel = true;
-                if (userSub) isSubscribed = true;
+//             channelModel.userSubscription(userId, channel.id)
+//             .then(function(userSub){
+//                 let isUserChannel = false;
+//                 let isSubscribed = false;
+//                 if (channel.userId === userId) isUserChannel = true;
+//                 if (userSub) isSubscribed = true;
   
-                channelModel.userSubscriptionCount(channel.id)
-                .then(function(count){
+//                 channelModel.userSubscriptionCount(channel.id)
+//                 .then(function(count){
                   
-                  resolve({channel, isUserChannel, isSubscribed, totalSubscriber: count});
-                  // return res.status(200).json({
-                  //   channel,
-                  //   isUserChannel,
-                  //   isSubscribed,
-                  //   totalSubscriber: count
-                  // });
-                }).catch(function(err){
-                  //return res.status(500).json({ err });
-                  console.log("i am here 1");
-                  reject(err);
-                })
+//                   resolve({channel, isUserChannel, isSubscribed, totalSubscriber: count});
+//                   // return res.status(200).json({
+//                   //   channel,
+//                   //   isUserChannel,
+//                   //   isSubscribed,
+//                   //   totalSubscriber: count
+//                   // });
+//                 }).catch(function(err){
+//                   //return res.status(500).json({ err });
+//                   console.log("i am here 1");
+//                   reject(err);
+//                 })
   
-            }).catch(function(err){
-              //return res.status(500).json({ err });
-              console.log("i am here 2");
-              reject(err);
-            })
-          }else{
-            channelModel.userSubscriptionCount(channel.id)
-            .then(function(count){
-              //return res.status(200).json({ channel, totalSubscriber: count });
-              resolve({ channel, totalSubscriber: count });
-            }).catch(function(err){
-              //return res.status(500).json({ err });
-              console.log("i am here 3");
-              reject(err);
-            })
-          }
-        }).catch(function(err){
-          //return res.status(500).json({ err });
-          console.log("i am here 4");
-          reject(err);
-        })
+//             }).catch(function(err){
+//               //return res.status(500).json({ err });
+//               console.log("i am here 2");
+//               reject(err);
+//             })
+//           }else{
+//             channelModel.userSubscriptionCount(channel.id)
+//             .then(function(count){
+//               //return res.status(200).json({ channel, totalSubscriber: count });
+//               resolve({ channel, totalSubscriber: count });
+//             }).catch(function(err){
+//               //return res.status(500).json({ err });
+//               console.log("i am here 3");
+//               reject(err);
+//             })
+//           }
+//         }).catch(function(err){
+//           //return res.status(500).json({ err });
+//           console.log("i am here 4");
+//           reject(err);
+//         })
   
-      }else{
-        // return res.status(404).json({
-        //   message: "Channel not found"
-        // });
-      }
+//       }else{
+//         // return res.status(404).json({
+//         //   message: "Channel not found"
+//         // });
+//       }
   
-    }).catch(function(err){
-      //return res.status(500).json({ err });
-      console.log("i am here 5");
-      reject(err);
-    })  
-  });
-}
+//     }).catch(function(err){
+//       //return res.status(500).json({ err });
+//       console.log("i am here 5");
+//       reject(err);
+//     })  
+//   });
+// }
 
   // exports.myChannel = function(user, res){
 //   if (!user) {
