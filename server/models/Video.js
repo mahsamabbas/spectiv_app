@@ -159,7 +159,7 @@ exports.updateVideoPath = function(videopaths, videoId){
 }
 
 exports.deleteVideo = function(videoId){
-    return Promise(function(resolve, reject){
+    return new Promise(function(resolve, reject){
       db.Video.update({ isDeleted: true }, { where: { id: videoId } })
       .then(function(){
         resolve();
