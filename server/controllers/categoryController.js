@@ -16,11 +16,13 @@ categoryController.get = (req, res) => {
 };
 
 categoryController.getCurrent = (req, res) => {
-  categoryModel.getCurrent(req.params)
+   categoryModel.getCurrent(req.params)
   .then(function(data){
+    console.log("in then");
     res.status(200).json(_.map(data, obj => obj.categoryId));
   })
   .catch(function(err){
+    console.log("in catch");
     res.status(500).json(err);
   })
 };

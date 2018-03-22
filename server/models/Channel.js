@@ -30,6 +30,85 @@ export default (sequelize, DataTypes) => {
   return Channel;
 };
 
+exports.getDbChannel = function(channelURL){
+
+  return new Promise(function(resolve, reject){
+    db.Channel.findOne({
+      where: {
+        channelURL
+      },
+      include: [
+        {
+          where: {
+            accessibility: 1,
+            pathToOriginal: {
+              $ne: null
+            },
+            isDeleted: {
+              $ne: true
+            }
+          },
+          model: db.Video,
+          limit: 12,
+          order: [["createdAt", "DESC"]]
+        }
+      ],
+      attributes: [
+        "id",
+        "name",
+        "channelURL",
+        "desc",
+        "businessEmail",
+        "userId",
+        "searchId",
+        "color"
+      ]
+    }).then(function(channel){
+      resolve(channel);
+    }).catch(function(err){
+      reject(err);
+    })
+  });
+
+}
+
+exports.userFindOne = function(userId){
+  return new Promise(function(resolve, reject){
+    db.User.findOne({
+      where: { id: userId },
+      attributes: ["avatarPath"]
+    }).then(function(userAvatar){
+      resolve(userAvatar);
+    }).catch(function(err){
+      reject(err);
+    })
+  })
+}
+
+exports.userSubscriptionFind = function(userId, id){
+  return new Promise(function(resolve, reject){
+    db.UserSubscription.findOne({
+      where: { userId, channelId: id }
+    }).then(function(userSub){
+      resolve(userSub);
+    })
+    .catch(function(err){
+      reject(err);
+    })
+  });
+}
+
+exports.userSubscriptionCount = function(id){
+  return new Promise(function(resolve, reject){
+    db.UserSubscription.count({
+      where: { channelId: id }
+    }).then(function(count){
+      resolve(count);
+    }).catch(function(err){
+      reject(err);
+    })
+  })
+}
 exports.getChannel = function(user, channelUrl, res){
   let userId;
   if (user) {
@@ -620,7 +699,7 @@ exports.createChannel = function(user,body){
 //     })
 //     .catch(err => res.status(500).json({ err }));
 // };
-exports.updateChannel = function (body, res){
+exports.updateChannel = function (body){
   const { id, name, desc, businessEmail, color, searchId } = body;
   const channelURL = name
     .toLowerCase()
@@ -681,60 +760,6 @@ exports.updateChannel = function (body, res){
         reject(err);
       })
     });
-
-  db.Channel.update(
-    {
-      name,
-      channelURL,
-      desc,
-      businessEmail,
-      color
-    },
-    { where: { id } }
-  )
-    .then(() => {
-      // UPDATE CHANNEL IN THE SEARCH INDEX
-      if (searchId && process.env.NODE_ENV === 'production') {
-        channelIndex.partialUpdateObject(
-          {
-            name,
-            desc,
-            channelColor: color,
-            objectID: searchId
-          },
-          err => {
-            if (err) {
-              console.error(err);
-            } else {
-              console.log("Channel info in search index is updated");
-              channelIndex.getObject(searchId, (err2, channelContent) => {
-                if (err2) {
-                  console.error(err2);
-                }
-                const channelVideos = channelContent.videos.map(vidId => {
-                  return {
-                    channelName: name,
-                    channelColor: color,
-                    channelUrl: channelURL,
-                    objectID: vidId
-                  };
-                });
-                videoIndex.partialUpdateObjects(channelVideos, err3 => {
-                  if (err3) {
-                    console.error(err3);
-                  } else {
-                    console.log("Channel info on videos are updated");
-                  }
-                });
-              });
-            }
-          }
-        );
-      }
-
-      return res.status(200).json({ msg: "success" });
-    })
-    .catch(err => res.status(500).json({ err }));
 };
 exports.getAllFeatured = function(){
   return new Promise(function(resolve,reject){

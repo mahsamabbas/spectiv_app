@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import db from './../models';
 import updateCategories from './../lib/category/updateCategories';
 export default (sequelize, DataTypes) => {
@@ -25,7 +26,8 @@ exports.get = function get(){
   });
 }
 
-exports.getCurrent = function(channelId){
+exports.getCurrent = function(id){
+  const { channelId } = id;
   return new Promise(function(resolve, reject){
     db.ChannelCategory.findAll({
       where: { channelId },
@@ -36,18 +38,6 @@ exports.getCurrent = function(channelId){
       reject(err);
     })
   });
-  //const { channelId } = req.params;
-  // db.ChannelCategory.findAll({
-  //   where: { channelId },
-  //   attributes: ['categoryId'],
-  // })
-  // .then((data) => {
-  //   res.status(200).json(_.map(data, obj => obj.categoryId));
-  // })
-  // .catch((err) => {
-  //   console.log(err);
-  //   res.status(500).json(err);
-  // });
 }
 
 exports.update = function(categories, channelId){
