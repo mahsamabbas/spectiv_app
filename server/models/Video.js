@@ -1,10 +1,3 @@
-import AWS from 'aws-sdk';
-import formidable from 'formidable';
-import Pusher from 'pusher';
-import md5 from 'js-md5';
-import _ from 'lodash';
-import fs from 'fs';
-import transcoder from '../lib/helpers/transcoder';
 import db from './../models';
 
 export default (sequelize, DataTypes) => {

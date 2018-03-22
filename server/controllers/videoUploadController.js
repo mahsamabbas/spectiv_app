@@ -30,26 +30,26 @@ const crashReport = (res, userId, videoId, videoHash, searchId) => {
   }).catch((userErr) => {
     console.log('ERROR updating user "isUploading" to false: ', userErr);
   });
-  // videoModel.updateUserUploadingFalse(userId)
-  // .then(function(){
+  videoModel.updateUserUploadingFalse(userId)
+  .then(function(){
 
-  // }).catch(function(userErr){
-  //   console.log('ERROR updating user "isUploading" to false: ', userErr);
-  // })
+  }).catch(function(userErr){
+    console.log('ERROR updating user "isUploading" to false: ', userErr);
+  })
   if (videoId) {
     const params = { Bucket: process.env.AWS_VIDEO_BUCKET, Prefix: `user_${userId}/${videoHash}` };
     const s3 = new AWS.S3();
 
-    // videoModel.destoryVideoById(videoIds)
-    // .then(function(){
+    videoModel.destoryVideoById(videoIds)
+    .then(function(){
 
-    // }).catch(function(userErr){
-    //   console.log(`ERROR destroying video id: ${videoId}: `, userErr);
-    // })
-    db.Video.destroy({ where: { id: videoId } })
-    .catch((userErr) => {
+    }).catch(function(userErr){
       console.log(`ERROR destroying video id: ${videoId}: `, userErr);
-    });
+    })
+    // db.Video.destroy({ where: { id: videoId } })
+    // .catch((userErr) => {
+    //   console.log(`ERROR destroying video id: ${videoId}: `, userErr);
+    // });
 
     s3.listObjectsV2(params, (err, data) => {
       const objList = _.map(data.Contents, obj => ({ Key: obj.Key }));
@@ -62,22 +62,8 @@ const crashReport = (res, userId, videoId, videoHash, searchId) => {
       }, (err2, data2) => {
         if (err2) console.log('file not found: ', err2);
         else {
-          // videoModel.updateVideoDelete(videoId)
-          // .then(function(){
-          //   // DELETE THE VIDEO FROM SEARCH INDEX
-          //   if (searchId && process.env.NODE_ENV === 'production') {
-          //     videoIndex.deleteObject(searchId, (error) => {
-          //       if (error) {
-          //         console.error(error);
-          //       }
-          //     });
-          //   }
-          //   res.status(200).json(data2);
-          // }).catch(function(err3){
-          //   console.log(err3)
-          // })
-          db.Video.update({ isDeleted: true }, { where: { id: videoId } })
-          .then(() => {
+          videoModel.updateVideoDelete(videoId)
+          .then(function(){
             // DELETE THE VIDEO FROM SEARCH INDEX
             if (searchId && process.env.NODE_ENV === 'production') {
               videoIndex.deleteObject(searchId, (error) => {
@@ -87,8 +73,22 @@ const crashReport = (res, userId, videoId, videoHash, searchId) => {
               });
             }
             res.status(200).json(data2);
+          }).catch(function(err3){
+            console.log(err3)
           })
-          .catch(err3 => console.log(err3));
+          // db.Video.update({ isDeleted: true }, { where: { id: videoId } })
+          // .then(() => {
+          //   // DELETE THE VIDEO FROM SEARCH INDEX
+          //   if (searchId && process.env.NODE_ENV === 'production') {
+          //     videoIndex.deleteObject(searchId, (error) => {
+          //       if (error) {
+          //         console.error(error);
+          //       }
+          //     });
+          //   }
+          //   res.status(200).json(data2);
+          // })
+          // .catch(err3 => console.log(err3));
         }
       });
     });
@@ -133,21 +133,6 @@ videoUploadController.delete = (req, res) => {
           }).catch(function(err){
             res.status(500).json({message: err3});
           })
-          // db.Video.update({ isDeleted: true }, { where: { id: videoId } })
-          // .then(() => {
-          //   // DELETE THE VIDEO FROM SEARCH INDEX
-          //   if (process.env.NODE_ENV === 'production') {
-          //     videoIndex.deleteObject(searchId, (error) => {
-          //       if (error) {
-          //         console.error(error);
-          //       }
-          //       res.status(200).json(data2);
-          //     });
-          //   } else {
-          //     res.status(200).json(data2);
-          //   }
-          // })
-          // .catch(err3 => res.status(500).json({ message: err3 }));
         }
       });
     });
@@ -377,23 +362,6 @@ videoUploadController.getVideoInfo = (req, res) => {
   }).catch(function(err){
     res.status(500).json(err);
   })
-  // const { id } = req.params;
-  // db.Video.findOne({
-  //   where: { id },
-  //   include: [{
-  //     model: db.Tag,
-  //     through: {
-  //       model: db.VideoTag,
-  //       attributes: [],
-  //     },
-  //     attributes: ['id', 'name'],
-  //   }],
-  // })
-  // .then((data) => {
-  //   const { title, desc, thumbnailPath, canLike, canComment, accessibility } = data;
-  //   const tags = data.Tags;
-  //   res.status(200).json({ title, desc, thumbnailPath, canLike, canComment, accessibility, tags });
-  // }).catch(err => res.status(500).json(err));
 };
 
 export default videoUploadController;
