@@ -372,53 +372,6 @@ userController.editPassword = (req, res) => {
       success: false,
     });
   })
-
-  // db.User.findOne({ where: { id } })
-  //   .then((user) => {
-  //     if (!user) {
-  //       return res.status(500).json({
-  //         message: 'There isn\'t a user with that id',
-  //         success: false,
-  //       });
-  //     }
-
-  //     db.User.validatePassword(oldPassword, user.password, (err, matchedUser) => {
-  //       if (matchedUser) {
-  //         user.updateAttributes({
-  //           password: newPassword,
-  //         });
-
-  //         const smtpInfo = nodemailer.createTransport(process.env.EMAIL_CONNECTION_STRING);
-  //         const mailOption = {
-  //           to: user.email,
-  //           from: 'no-reply@spectivvr.com',
-  //           subject: 'Your Spectiv password has been changed',
-  //           text: `Hello, \n\n This is a confirmation email that your password has been changed for your ${user.email} account.\n`,
-  //           html: `<p>Hello,</p><p>This is a confirmation email that your password has been changed for ${user.email} account.</p><p>Please do not respond to this email</p>`,
-  //         };
-
-  //         smtpInfo.sendMail(mailOption, (error) => {
-  //           if (error) {
-  //             console.log(error);
-  //           }
-  //         });
-
-  //         return res.status(200).json({
-  //           success: true,
-  //         });
-  //       }
-
-  //       return res.status(500).json({
-  //         message: 'The old password was incorrect',
-  //         success: false,
-  //       });
-  //     }, user);
-  //   }).catch((err) => {
-  //     return res.status(500).json({
-  //       err,
-  //       success: false,
-  //     });
-  //   });
 };
 
 export default userController;
