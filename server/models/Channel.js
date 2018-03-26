@@ -371,148 +371,98 @@ exports.getAllFeatured = function(){
 
 
   //this is a test and it is under construction
-// exports.getFinalChannel = function(req){
+exports.getChannel = function(user, channelUrl){
 
-//   let userId;
-//   if (req.user) {
-//     // Set id if user is logged in.
-//     userId = req.user.id;
-//   }
-//   const channelURL = req.params.channelURL
-//     .toLowerCase()
-//     .trim()
-//     .replace(/\s+/g, "_");
+  let userId;
+  if (user) {
+    // Set id if user is logged in.
+    userId = user.id;
+  }
+  const channelURL = channelUrl
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "_");
 
-//   return new Promise(function(resolve, reject){
+    return new Promise(function(resolve, reject){
+      db.Channel.findOne({
+        where: {
+          channelURL
+        },
+        include: [
+          {
+            where: {
+              accessibility: 1,
+              pathToOriginal: {
+                $ne: null
+              },
+              isDeleted: {
+                $ne: true
+              }
+            },
+            model: db.Video,
+            limit: 12,
+            order: [["createdAt", "DESC"]]
+          }
+        ],
+        attributes: [
+          "id",
+          "name",
+          "channelURL",
+          "desc",
+          "businessEmail",
+          "userId",
+          "searchId",
+          "color"
+        ]
+      }).then(function(channel){
+        if(channel){
 
-//     channelModel.velidateChannel(channelURL)
-//     .then(function(channel){
-//       if(channel){
-  
-//         channelModel.findUser(channel.userId)
-//         .then(function(userAvatar){
-//           channel.dataValues.avatarPath = userAvatar.avatarPath;
-//           if(userId){
-  
-//             channelModel.userSubscription(userId, channel.id)
-//             .then(function(userSub){
-//                 let isUserChannel = false;
-//                 let isSubscribed = false;
-//                 if (channel.userId === userId) isUserChannel = true;
-//                 if (userSub) isSubscribed = true;
-  
-//                 channelModel.userSubscriptionCount(channel.id)
-//                 .then(function(count){
-                  
-//                   resolve({channel, isUserChannel, isSubscribed, totalSubscriber: count});
-//                   // return res.status(200).json({
-//                   //   channel,
-//                   //   isUserChannel,
-//                   //   isSubscribed,
-//                   //   totalSubscriber: count
-//                   // });
-//                 }).catch(function(err){
-//                   //return res.status(500).json({ err });
-//                   console.log("i am here 1");
-//                   reject(err);
-//                 })
-  
-//             }).catch(function(err){
-//               //return res.status(500).json({ err });
-//               console.log("i am here 2");
-//               reject(err);
-//             })
-//           }else{
-//             channelModel.userSubscriptionCount(channel.id)
-//             .then(function(count){
-//               //return res.status(200).json({ channel, totalSubscriber: count });
-//               resolve({ channel, totalSubscriber: count });
-//             }).catch(function(err){
-//               //return res.status(500).json({ err });
-//               console.log("i am here 3");
-//               reject(err);
-//             })
-//           }
-//         }).catch(function(err){
-//           //return res.status(500).json({ err });
-//           console.log("i am here 4");
-//           reject(err);
-//         })
-  
-//       }else{
-//         // return res.status(404).json({
-//         //   message: "Channel not found"
-//         // });
-//       }
-  
-//     }).catch(function(err){
-//       //return res.status(500).json({ err });
-//       console.log("i am here 5");
-//       reject(err);
-//     })  
-//   });
-// }
+          db.User.findOne({
+            where: { id: channel.userId },
+            attributes: ["avatarPath"]
+          }).then(function(userAvatar){
+            channel.dataValues.avatarPath = userAvatar.avatarPath;
+            if(userId){
+              db.UserSubscription.findOne({
+                where: { userId, channelId: channel.id }
+              }).then(function(userSub){
+                  let isUserChannel = false;
+                  let isSubscribed = false;
+                  if (channel.userId === userId) isUserChannel = true;
+                  if (userSub) isSubscribed = true;
 
-  // exports.myChannel = function(user, res){
-//   if (!user) {
-//     // Check if user is logged in
-//     return res.status(401).json({
-//       message: "Channel Not Found"
-//     });
-//   }
+                  db.UserSubscription.count({
+                    where: { channelId: channel.id }
+                  }).then(function(count){
+                    resolve({channel, isUserChannel, isSubscribed, totalSubscriber: count});
+                  }).catch(function(err){
+                    reject(err);
+                  })
+              })
+              .catch(function(err){
+                reject(err);
+              })
+            }else{
+              db.UserSubscription.count({
+                where: { channelId: channel.id }
+              }).then(function(count){
+                resolve({ channel, totalSubscriber: count });
+              }).catch(function(err){
+                reject(err);
+              })
+            }
+          }).catch(function(err){
+            reject(err);
+          })
 
-//   db.Channel.findOne({
-//     where: { userId: user.id },
-//     attributes: {
-//       exclude: ["createdAt", "updatedAt"]
-//     },
-//     include: [
-//       {
-//         model: db.Video,
-//         limit: 7,
-//         where: {
-//           accessibility: 1,
-//           pathToOriginal: {
-//             $ne: null
-//           },
-//           isDeleted: {
-//             $ne: true
-//           }
-//         },
-//         order: [["createdAt", "DESC"]]
-//       }
-//     ]
-//   })
-//     .then(channel => {
-//       if (!channel) {
-//         return res.status(404).json({
-//           message: "You do not have a channel."
-//         });
-//       }
-
-//       db.User.findOne({
-//         where: {
-//           id: channel.userId
-//         },
-//         attributes: ["avatarPath"]
-//       })
-//         .then(() => {
-//           // TODO - find out why userAvatar is unused here ... clearly there was some intent
-//           return res.status(200).json({
-//             channel,
-//             user: user
-//           });
-//         })
-//         .catch(err => {
-//           console.log(err);
-//           return res.status(500).json({ err });
-//         });
-//     })
-//     .catch(err => {
-//       console.log(err);
-//       return res.status(500).json({ err });
-//     });
-// };
+        }else{
+          reject({message: "Channel not found"});
+        }
+      }).catch(function(err){
+        reject(err);
+      })
+    });
+}
 
 // exports.createChannel = function(user,body,res){
 //   const { id } = user;

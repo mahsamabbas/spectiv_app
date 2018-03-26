@@ -3,9 +3,9 @@ import validator from 'validator';
 import crypto from 'crypto';
 import async from 'async';
 import nodemailer from 'nodemailer';
-
 import db from './../models';
-
+import { model } from 'mongoose';
+const userModel = require('./../models/User');
 const userController = {};
 
 userController.login = (req, res) => {
@@ -68,14 +68,8 @@ userController.createUser = (req, res, next) => {
     });
   }
 
-  db.User.create({
-    username,
-    email,
-    password,
-    isInactive: false,
-    isApproved: false,
-  }).then((createdUser) => {
-    // console.log(createdUser);
+  userModel.createUser(username, email, password)
+  .then(function(createdUser){
     passport.authenticate('local', (err, user, info) => {
       if (err) {
         return next(err); // will generate a 500 error
@@ -98,11 +92,11 @@ userController.createUser = (req, res, next) => {
         });
       });
     })(req, res, next);
-  }).catch((err) => {
+  }).catch(function(err){
     return res.status(500).json({
       err,
     });
-  });
+  })
 };
 
 userController.logout = (req, res) => {
@@ -169,13 +163,10 @@ userController.sendPasswordChange = (req, res) => {
         done(err, token);
       });
     },
-    (token, done) => {
-      db.User.findOne({
-        where: {
-          username,
-          email,
-        },
-      }).then((user) => {
+    (token, done) => 
+    {
+      userModel.findUser({username, email})
+      .then(function(user){
         if (!user) {
           // TODO - update flow so that this security hole is closed.
           // A bad actor could use this to find what email addresses / usernames
@@ -192,9 +183,9 @@ userController.sendPasswordChange = (req, res) => {
           resetPasswordExpires: date,
         });
         done(null, token, user);
-      }).catch((err) => {
+      }).catch(function(err){
         done(err, null, null);
-      });
+      })
     },
     (token, user, done) => {
       const smtpInfo = nodemailer.createTransport(process.env.EMAIL_CONNECTION_STRING);
@@ -229,12 +220,10 @@ userController.changePassword = (req, res) => {
   const { token } = req.params;
 
   async.waterfall([
-    (done) => {
-      db.User.findOne({
-        where: {
-          resetPasswordToken: token,
-        },
-      }).then((user) => {
+    (done) => 
+    {
+      userModel.findUser({resetPasswordToken: token})
+      .then(function(user){
         if (!user) {
           return res.status(500).json({
             message: 'There is no user with reset token.',
@@ -253,9 +242,9 @@ userController.changePassword = (req, res) => {
         });
 
         done(null, user);
-      }).catch((err) => {
+      }).catch(function(err){
         done(err, null);
-      });
+      })
     }, (user, done) => {
       const smtpInfo = nodemailer.createTransport(process.env.EMAIL_CONNECTION_STRING);
       const mailOption = {
@@ -286,37 +275,12 @@ userController.changePassword = (req, res) => {
 
 userController.apply = (req, res) => {
   if (req.user) {
-    db.Questionnaire.findOne({
-      where: {
-        userId: req.user.id,
-      },
-    }).then((questionnaire) => {
-      if (questionnaire) {
-        db.User.findOne({
-          where: {
-            id: req.user.id,
-          },
-          attributes: ['isApproved'],
-        }).then((user) => {
-          return res.status(200).json({
-            success: true,
-            questionnaire,
-            isApproved: user.isApproved,
-          });
-        }).catch((err) => {
-          return res.status(500).json({
-            err,
-            success: false,
-          });
-        });
-      } else {
-        return res.status(200).json({
-          success: true,
-        });
-      }
-    }).catch((err) => {
+    userModel.apply(req.user.id)
+    .then(function(data){
+      return res.status(200).json(data);
+    }).catch(function(err){
       return res.write('There was an internal server error.');
-    });
+    })
   } else {
     return res.status(200).json({
       login: false,
@@ -329,21 +293,14 @@ userController.submitApplication = (req, res) => {
 
   if (req.user) {
     const { id } = req.user;
-    db.Questionnaire.create({
-      technology,
-      yesNo,
-      explain,
-      userId: id,
-    }).then(() => {
+    userModel.submitApplication(id, technology, yesNo, explain)
+    .then(function(){
       return res.status(200).json({
         success: true,
       });
-    }).catch((err) => {
-      return res.status(500).json({
-        err,
-        success: false,
-      });
-    });
+    }).catch(function(err){
+      return res.status(500).json(err);
+    })
   } else {
     return res.status(401).json({
       login: false,
@@ -352,91 +309,116 @@ userController.submitApplication = (req, res) => {
 };
 
 userController.getApplications = (req, res) => {
-  db.Questionnaire.find({ where: {} })
-    .then((applications) => {
-      return res.status(200).json({
-        applications,
-        success: true,
-      });
-    }).catch((err) => {
-      return res.status(500).json({
-        err,
-        success: false,
-      });
-    });
+  userModel.getApplications()
+  .then(function(data){
+    return res.status(200).json(data);
+  }).catch(function(err){
+    return res.status(500).json(err);
+  })
 };
 
 userController.editUserInfo = (req, res) => {
   const { id } = req.user;
   const { firstName, lastName, email } = req.body;
 
-  db.User.update({
-    firstName,
-    lastName,
-    email,
-  }, {
-    where: { id },
-  }).then(() => {
-    return res.status(200).json({
-      success: true,
-    });
-  }).catch((err) => {
-    return res.status(500).json({
-      err,
-    });
-  });
+  userModel.editUserInfo(id, firstName, lastName, email)
+  .then(function(){
+    return res.status(200).json({success:true,})
+  }).catch(function(err){
+    return res.status(500).json({err});
+  })
 };
 
 userController.editPassword = (req, res) => {
   const { id } = req.user;
   const { oldPassword, newPassword } = req.body;
 
-  db.User.findOne({ where: { id } })
-    .then((user) => {
-      if (!user) {
-        return res.status(500).json({
-          message: 'There isn\'t a user with that id',
-          success: false,
+  userModel.findUser({ id })
+  .then(function(user){
+    db.User.validatePassword(oldPassword, user.password, (err, matchedUser) => {
+      if (matchedUser) {
+        user.updateAttributes({
+          password: newPassword,
+        });
+
+        const smtpInfo = nodemailer.createTransport(process.env.EMAIL_CONNECTION_STRING);
+        const mailOption = {
+          to: user.email,
+          from: 'no-reply@spectivvr.com',
+          subject: 'Your Spectiv password has been changed',
+          text: `Hello, \n\n This is a confirmation email that your password has been changed for your ${user.email} account.\n`,
+          html: `<p>Hello,</p><p>This is a confirmation email that your password has been changed for ${user.email} account.</p><p>Please do not respond to this email</p>`,
+        };
+
+        smtpInfo.sendMail(mailOption, (error) => {
+          if (error) {
+            console.log(error);
+          }
+        });
+
+        return res.status(200).json({
+          success: true,
         });
       }
 
-      db.User.validatePassword(oldPassword, user.password, (err, matchedUser) => {
-        if (matchedUser) {
-          user.updateAttributes({
-            password: newPassword,
-          });
-
-          const smtpInfo = nodemailer.createTransport(process.env.EMAIL_CONNECTION_STRING);
-          const mailOption = {
-            to: user.email,
-            from: 'no-reply@spectivvr.com',
-            subject: 'Your Spectiv password has been changed',
-            text: `Hello, \n\n This is a confirmation email that your password has been changed for your ${user.email} account.\n`,
-            html: `<p>Hello,</p><p>This is a confirmation email that your password has been changed for ${user.email} account.</p><p>Please do not respond to this email</p>`,
-          };
-
-          smtpInfo.sendMail(mailOption, (error) => {
-            if (error) {
-              console.log(error);
-            }
-          });
-
-          return res.status(200).json({
-            success: true,
-          });
-        }
-
-        return res.status(500).json({
-          message: 'The old password was incorrect',
-          success: false,
-        });
-      }, user);
-    }).catch((err) => {
       return res.status(500).json({
-        err,
+        message: 'The old password was incorrect',
         success: false,
       });
+    }, user);
+  }).catch(function(err){
+    return res.status(500).json({
+      err,
+      success: false,
     });
+  })
+
+  // db.User.findOne({ where: { id } })
+  //   .then((user) => {
+  //     if (!user) {
+  //       return res.status(500).json({
+  //         message: 'There isn\'t a user with that id',
+  //         success: false,
+  //       });
+  //     }
+
+  //     db.User.validatePassword(oldPassword, user.password, (err, matchedUser) => {
+  //       if (matchedUser) {
+  //         user.updateAttributes({
+  //           password: newPassword,
+  //         });
+
+  //         const smtpInfo = nodemailer.createTransport(process.env.EMAIL_CONNECTION_STRING);
+  //         const mailOption = {
+  //           to: user.email,
+  //           from: 'no-reply@spectivvr.com',
+  //           subject: 'Your Spectiv password has been changed',
+  //           text: `Hello, \n\n This is a confirmation email that your password has been changed for your ${user.email} account.\n`,
+  //           html: `<p>Hello,</p><p>This is a confirmation email that your password has been changed for ${user.email} account.</p><p>Please do not respond to this email</p>`,
+  //         };
+
+  //         smtpInfo.sendMail(mailOption, (error) => {
+  //           if (error) {
+  //             console.log(error);
+  //           }
+  //         });
+
+  //         return res.status(200).json({
+  //           success: true,
+  //         });
+  //       }
+
+  //       return res.status(500).json({
+  //         message: 'The old password was incorrect',
+  //         success: false,
+  //       });
+  //     }, user);
+  //   }).catch((err) => {
+  //     return res.status(500).json({
+  //       err,
+  //       success: false,
+  //     });
+  //   });
 };
 
 export default userController;
