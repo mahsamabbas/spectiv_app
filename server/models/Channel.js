@@ -30,86 +30,6 @@ export default (sequelize, DataTypes) => {
   return Channel;
 };
 
-exports.velidateChannel = function(channelURL){
-
-  return new Promise(function(resolve, reject){
-    db.Channel.findOne({
-      where: {
-        channelURL
-      },
-      include: [
-        {
-          where: {
-            accessibility: 1,
-            pathToOriginal: {
-              $ne: null
-            },
-            isDeleted: {
-              $ne: true
-            }
-          },
-          model: db.Video,
-          limit: 12,
-          order: [["createdAt", "DESC"]]
-        }
-      ],
-      attributes: [
-        "id",
-        "name",
-        "channelURL",
-        "desc",
-        "businessEmail",
-        "userId",
-        "searchId",
-        "color"
-      ]
-    }).then(function(channel){
-      resolve(channel);
-    }).catch(function(err){
-      reject(err);
-    })
-  });
-
-}
-
-exports.findUser = function(userId){
-  return new Promise(function(resolve, reject){
-    db.User.findOne({
-      where: { id: userId },
-      attributes: ["avatarPath"]
-    }).then(function(userAvatar){
-      resolve(userAvatar);
-    }).catch(function(err){
-      reject(err);
-    })
-  })
-}
-
-exports.userSubscription = function(userId, id){
-  return new Promise(function(resolve, reject){
-    db.UserSubscription.findOne({
-      where: { userId, channelId: id }
-    }).then(function(userSub){
-      resolve(userSub);
-    })
-    .catch(function(err){
-      reject(err);
-    })
-  });
-}
-
-exports.userSubscriptionCount = function(id){
-  return new Promise(function(resolve, reject){
-    db.UserSubscription.count({
-      where: { channelId: id }
-    }).then(function(count){
-      resolve(count);
-    }).catch(function(err){
-      reject(err);
-    })
-  })
-}
-
 exports.myChannel = function(user){
 
 var a = new Promise(function(resolve,reject){
@@ -177,9 +97,9 @@ return Promise.all([a,b])
 })
 }
 
-exports.createChannel = function(user,body){
+exports.createChannel = function(user, channelData){
   const { id } = user;
-  const { name, desc, businessEmail, categories, color } = body;
+  const { name, desc, businessEmail, categories, color } = channelData;
   const channelURL = name
     .toLowerCase()
     .trim()
@@ -269,8 +189,8 @@ exports.createChannel = function(user,body){
     }).catch(function(err){});
 };
 
-exports.updateChannel = function (body){
-  const { id, name, desc, businessEmail, color, searchId } = body;
+exports.updateChannel = function (channelData){
+  const { id, name, desc, businessEmail, color, searchId } = channelData;
   const channelURL = name
     .toLowerCase()
     .trim()
@@ -371,7 +291,7 @@ exports.getAllFeatured = function(){
 
 
   //this is a test and it is under construction
-exports.getChannel = function(user, channelUrl){
+exports.getOneByUrl = function(user, channelUrl){
 
   let userId;
   if (user) {
@@ -536,5 +456,84 @@ exports.getChannel = function(user, channelUrl){
 //     });
 // };
 
+// exports.velidateChannel = function(channelURL){
+
+//   return new Promise(function(resolve, reject){
+//     db.Channel.findOne({
+//       where: {
+//         channelURL
+//       },
+//       include: [
+//         {
+//           where: {
+//             accessibility: 1,
+//             pathToOriginal: {
+//               $ne: null
+//             },
+//             isDeleted: {
+//               $ne: true
+//             }
+//           },
+//           model: db.Video,
+//           limit: 12,
+//           order: [["createdAt", "DESC"]]
+//         }
+//       ],
+//       attributes: [
+//         "id",
+//         "name",
+//         "channelURL",
+//         "desc",
+//         "businessEmail",
+//         "userId",
+//         "searchId",
+//         "color"
+//       ]
+//     }).then(function(channel){
+//       resolve(channel);
+//     }).catch(function(err){
+//       reject(err);
+//     })
+//   });
+
+// }
+
+// exports.findUser = function(userId){
+//   return new Promise(function(resolve, reject){
+//     db.User.findOne({
+//       where: { id: userId },
+//       attributes: ["avatarPath"]
+//     }).then(function(userAvatar){
+//       resolve(userAvatar);
+//     }).catch(function(err){
+//       reject(err);
+//     })
+//   })
+// }
+
+// exports.userSubscription = function(userId, id){
+//   return new Promise(function(resolve, reject){
+//     db.UserSubscription.findOne({
+//       where: { userId, channelId: id }
+//     }).then(function(userSub){
+//       resolve(userSub);
+//     })
+//     .catch(function(err){
+//       reject(err);
+//     })
+//   });
+// }
+
+// exports.userSubscriptionCount = function(id){
+//   return new Promise(function(resolve, reject){
+//     db.UserSubscription.count({
+//       where: { channelId: id }
+//     }).then(function(count){
+//       resolve(count);
+//     }).catch(function(err){
+//       reject(err);
+//     })
+//   })
+// }
 
 

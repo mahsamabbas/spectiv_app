@@ -30,7 +30,7 @@ const crashReport = (res, userId, videoId, videoHash, searchId) => {
   }).catch((userErr) => {
     console.log('ERROR updating user "isUploading" to false: ', userErr);
   });
-  videoModel.updateUserUploadingFalse(userId)
+  videoModel.setUploading(userId, false)
   .then(function(){
 
   }).catch(function(userErr){
@@ -40,7 +40,7 @@ const crashReport = (res, userId, videoId, videoHash, searchId) => {
     const params = { Bucket: process.env.AWS_VIDEO_BUCKET, Prefix: `user_${userId}/${videoHash}` };
     const s3 = new AWS.S3();
 
-    videoModel.destoryVideoById(videoIds)
+    videoModel.markDeleted(videoIds)
     .then(function(){
 
     }).catch(function(userErr){
@@ -175,7 +175,7 @@ videoUploadController.upload = (req, res) => {
           channelColor: fields.channelColor,
         };
 
-        videoModel.updateUserVideoTrue(req.user.id)
+        videoModel.setUploading(req.user.id, true)
         .then(function(){
 
         }).catch(function(err){
@@ -260,7 +260,7 @@ videoUploadController.upload = (req, res) => {
                 pathTo1080p: `${process.env.AWS_VIDEO_CDN}/user_${req.user.id}/${videoHash}/${videoName}-master.m3u8`,
               };
 
-              videoModel.videoFindOne(result.id)
+              videoModel.findById(result.id)
               .then((result2) => {
                 if (result2) {
                   const objList = _.map(data2.Contents, obj => ({ Key: obj.Key }));
@@ -324,7 +324,7 @@ videoUploadController.upload = (req, res) => {
                   console.error(`Can't find the video with id (${result.id}) in video table`);
                   crashReport(res, req.user.id, videoId, videoHash, searchId);
                 }
-                videoModel.updateUserUploadingFalse(req.user.id)
+                videoModel.setUploading(req.user.id, false)
                 .then(function(){
 
                 })

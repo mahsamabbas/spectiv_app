@@ -6,7 +6,7 @@ const categoryModel = require('./../models/Category');
 const categoryController = {};
 
 categoryController.get = (req, res) => {
-  categoryModel.get()
+  categoryModel.getAll()
   .then(function(data){
     res.status(200).json(data);
   }).catch(function(err){
@@ -16,7 +16,7 @@ categoryController.get = (req, res) => {
 };
 
 categoryController.getCurrent = (req, res) => {
-   categoryModel.getCurrent(req.params)
+   categoryModel.getCategory(req.params)
   .then(function(data){
     console.log("in then");
     res.status(200).json(_.map(data, obj => obj.categoryId));

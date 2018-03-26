@@ -15,7 +15,7 @@ export default (sequelize, DataTypes) => {
   return Category;
 };
 
-exports.get = function get(){
+exports.getAll = function(){
   return new Promise(function(resolve, reject){
     db.Category.findAll({ attributes: ['id', 'name'] })
     .then(function(data){
@@ -26,8 +26,8 @@ exports.get = function get(){
   });
 }
 
-exports.getCurrent = function(id){
-  const { channelId } = id;
+exports.getCategory = function(channelid){
+  const { channelId } = channelid;
   return new Promise(function(resolve, reject){
     db.ChannelCategory.findAll({
       where: { channelId },

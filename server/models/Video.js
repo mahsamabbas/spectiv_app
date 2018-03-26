@@ -31,11 +31,11 @@ export default (sequelize, DataTypes) => {
   return Video;
 };
 
-exports.updateUserUploadingFalse = function(userId){
+exports.setUploading = function(userId, boolVal){
 
   return new Promise(function(resolve, reject){
     db.User.update({
-      isUploading: false,
+      isUploading: boolVal,
     }, {
       where: {
         id: userId,
@@ -48,7 +48,7 @@ exports.updateUserUploadingFalse = function(userId){
   });
 }
 
-exports.destoryVideoById = function(videoId){
+exports.markDeleted = function(videoId){
   return new Promise(function(resolve, reject){
     db.Video.destroy({ where: { id: videoId } })
     .then(function(){
@@ -94,22 +94,6 @@ exports.videoCreate = function(fileName, ChannelId, videoDuration){
   });
 }
 
-exports.updateUserVideoTrue = function(userId){
-  return new Promise(function(resolve, reject){
-    db.User.update({
-      isUploading: true,
-    }, {
-      where: {
-        id: userId,
-      },
-    }).then(function(){
-      resolve();
-    }).catch(function(err){
-      reject(err);
-    })
-  });
-}
-
 exports.updateVideo = function(videoId, userId, videoHash, videoName, suffix){
   return new Promise(function(resolve, reject){
     db.Video.update({
@@ -126,7 +110,7 @@ exports.updateVideo = function(videoId, userId, videoHash, videoName, suffix){
   });
 }
 
-exports.videoFindOne = function(videoId){
+exports.findById = function(videoId){
   return new Promise(function(resolve, reject){
     db.Video.findOne({ where: { id: videoId, isDeleted: false },
     }).then(function(result2){

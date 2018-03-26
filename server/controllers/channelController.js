@@ -7,7 +7,7 @@ const channelController = {};
 
 channelController.getChannel = (req, res) => {
 
-  channelModel.getChannel(req.user, req.params.channelURL)
+  channelModel.getOneByUrl(req.user, req.params.channelURL)
   .then(function(data){
     return res.status(200).json(data);
   }).catch(function(err){
