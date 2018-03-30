@@ -38,36 +38,6 @@ userController.signUp = (req, res) => {
 userController.createUser = (req, res, next) => {
   const { username, email, password } = req.body;
 
-  if (!validator.isEmail(email)) {
-    return res.status(500).json({
-      err: 'Not a valid email.',
-    });
-  }
-
-  if (!username) {
-    return res.status(500).json({
-      err: 'Username is required',
-    });
-  }
-
-  if (!email) {
-    return res.status(500).json({
-      err: 'Email is required',
-    });
-  }
-
-  if (!password) {
-    return res.status(500).json({
-      err: 'Password is required',
-    });
-  }
-
-  if (password.length < 8) {
-    return res.status(500).json({
-      err: 'Password must be more than 8 characters.',
-    });
-  }
-
   userModel.createUser(username, email, password)
   .then(function(createdUser){
     passport.authenticate('local', (err, user, info) => {
@@ -141,20 +111,6 @@ userController.reset = (req, res) => {
 
 userController.sendPasswordChange = (req, res) => {
   const { username, email } = req.body;
-
-  if (!validator.isEmail(email)) {
-    return res.status(500).json({
-      message: 'Not a valid email',
-      success: false,
-    });
-  }
-
-  if (!username) {
-    return res.status(500).json({
-      message: 'Username is required',
-      success: false,
-    });
-  }
 
   async.waterfall([
     (done) => {

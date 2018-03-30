@@ -34,6 +34,10 @@ export default (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notEmpty: true,
+        len: {
+          args: 8,
+          msg: "Password must be 8 characters or more."
+      }
       },
     },
     email: {
@@ -41,6 +45,9 @@ export default (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         notEmpty: true,
+        isEmail: {
+          msg: "Not a valid email."
+      }
       },
     },
     isUploading: DataTypes.BOOLEAN,
