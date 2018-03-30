@@ -104,8 +104,6 @@ exports.updateVideo = function(videoId, userId, videoHash, videoName, suffix){
       resolve();
     }).catch(function(err5){
       reject(err5);
-      //console.log('FAILED updating video pathToOriginal in DB', err5);
-      //crashReport(res, req.user.id, videoId, videoHash, searchId);
     });
   });
 }

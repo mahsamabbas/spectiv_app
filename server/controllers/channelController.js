@@ -2,6 +2,7 @@ import db from "./../models";
 import createCategories from "./../lib/category/createCategories";
 import { channelIndex, videoIndex } from "./../config/algolia";
 const channelModel = require('./../models/Channel');
+const errorLogging = require('./../config/logging');
 
 const channelController = {};
 
@@ -33,7 +34,6 @@ channelController.myChannel = (req, res) => {
       }
     )
     .catch(function (error) {
-        console.log("in catch");
         res.send(error);
       }
     );

@@ -5,6 +5,7 @@ import async from 'async';
 import nodemailer from 'nodemailer';
 import db from './../models';
 import { model } from 'mongoose';
+const errorLogging = require('./../config/logging');
 const userModel = require('./../models/User');
 const userController = {};
 
@@ -28,6 +29,7 @@ userController.checkUploading = (req, res) => {
 };
 
 userController.signUp = (req, res) => {
+  errorLogging.saveErrorLog("clicked on signup page");
   if (req.isAuthenticated()) {
     return res.redirect('/');
   }
@@ -85,6 +87,7 @@ userController.createUser = (req, res, next) => {
         if (err2) {
           return next(err2);
         }
+        errorLogging.saveInfoLog("new user: "+username+" is created");
         return res.status(200).json({
           success: true,
           message: 'You have successfully logged in!',
@@ -352,7 +355,7 @@ userController.editPassword = (req, res) => {
 
         smtpInfo.sendMail(mailOption, (error) => {
           if (error) {
-            console.log(error);
+            errorLogging.saveErrorLog(error);
           }
         });
 

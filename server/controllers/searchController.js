@@ -1,5 +1,5 @@
 import * as clients from './../config/algolia';
-
+const errorLogging = require('./../config/logging');
 const searchController = {};
 
 searchController.search = (req, res) => {
@@ -76,7 +76,7 @@ searchController.search = (req, res) => {
 
   const searchCallback = (err, content) => {
     if (err) {
-      console.error(err);
+      errorLogging.saveErrorLog(err);
       return res.status(500).json({
         err,
       });

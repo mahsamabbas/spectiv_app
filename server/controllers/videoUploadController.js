@@ -8,6 +8,7 @@ import transcoder from '../lib/helpers/transcoder';
 import db from '../models';
 import { videoIndex, channelIndex } from './../config/algolia';
 const videoModel = require('./../models/Video');
+const errorLogging = require('./../config/logging');
 
 const pusher = new Pusher({
   appId: '401028',
@@ -28,13 +29,15 @@ const crashReport = (res, userId, videoId, videoHash, searchId) => {
       id: userId,
     },
   }).catch((userErr) => {
-    console.log('ERROR updating user "isUploading" to false: ', userErr);
+    errorLogging.saveErrorLog('ERROR updating user "isUploading" to false: ');
+    errorLogging.saveErrorLog(userErr);
   });
   videoModel.setUploading(userId, false)
   .then(function(){
 
   }).catch(function(userErr){
-    console.log('ERROR updating user "isUploading" to false: ', userErr);
+    errorLogging.saveErrorLog('ERROR updating user "isUploading" to false: ');
+    errorLogging.saveErrorLog(userErr);
   })
   if (videoId) {
     const params = { Bucket: process.env.AWS_VIDEO_BUCKET, Prefix: `user_${userId}/${videoHash}` };
@@ -44,13 +47,10 @@ const crashReport = (res, userId, videoId, videoHash, searchId) => {
     .then(function(){
 
     }).catch(function(userErr){
-      console.log(`ERROR destroying video id: ${videoId}: `, userErr);
+      errorLogging.saveErrorLog(`ERROR destroying video id: ${videoId}: `);
+      errorLogging.saveErrorLog(userErr);
     })
-    // db.Video.destroy({ where: { id: videoId } })
-    // .catch((userErr) => {
-    //   console.log(`ERROR destroying video id: ${videoId}: `, userErr);
-    // });
-
+    
     s3.listObjectsV2(params, (err, data) => {
       const objList = _.map(data.Contents, obj => ({ Key: obj.Key }));
       s3.deleteObjects({
@@ -60,7 +60,7 @@ const crashReport = (res, userId, videoId, videoHash, searchId) => {
           Quiet: true,
         },
       }, (err2, data2) => {
-        if (err2) console.log('file not found: ', err2);
+        if (err2){errorLogging.saveErrorLog("file not found: "); errorLogging.saveErrorLog(err2);} 
         else {
           videoModel.updateVideoDelete(videoId)
           .then(function(){
@@ -68,27 +68,14 @@ const crashReport = (res, userId, videoId, videoHash, searchId) => {
             if (searchId && process.env.NODE_ENV === 'production') {
               videoIndex.deleteObject(searchId, (error) => {
                 if (error) {
-                  console.error(error);
+                  errorLogging.saveErrorLog(error);
                 }
               });
             }
             res.status(200).json(data2);
           }).catch(function(err3){
-            console.log(err3)
+            errorLogging.saveErrorLog(err3);
           })
-          // db.Video.update({ isDeleted: true }, { where: { id: videoId } })
-          // .then(() => {
-          //   // DELETE THE VIDEO FROM SEARCH INDEX
-          //   if (searchId && process.env.NODE_ENV === 'production') {
-          //     videoIndex.deleteObject(searchId, (error) => {
-          //       if (error) {
-          //         console.error(error);
-          //       }
-          //     });
-          //   }
-          //   res.status(200).json(data2);
-          // })
-          // .catch(err3 => console.log(err3));
         }
       });
     });
@@ -113,7 +100,7 @@ videoUploadController.delete = (req, res) => {
           Quiet: true,
         },
       }, (err2, data2) => {
-        console.log(err2);
+        errorLogging.saveErrorLog(err2);
         if (err2) res.status(500).json({ message: 'file not found' });
         else {
 
@@ -123,7 +110,7 @@ videoUploadController.delete = (req, res) => {
             if (process.env.NODE_ENV === 'production') {
               videoIndex.deleteObject(searchId, (error) => {
                 if (error) {
-                  console.error(error);
+                  errorLogging.saveErrorLog(error);
                 }
                 res.status(200).json(data2);
               });
@@ -147,7 +134,7 @@ videoUploadController.upload = (req, res) => {
     const form = new formidable.IncomingForm();
 
     form.parse(req, (formerr, fields, files) => {
-      if (formerr) console.log(formerr);
+      if (formerr) errorLogging.saveErrorLog(formerr);
       const file = files.video;
       const videoHash = md5(`${file.name}${Date.now()}`);
       const videoName = file.name.split('/').reverse()[0].split('.')[0].replace(/[^\w.]/g, '');
@@ -179,14 +166,15 @@ videoUploadController.upload = (req, res) => {
         .then(function(){
 
         }).catch(function(err){
-          console.log('ERROR updating user "isUploading" to true: ', err);
+          errorLogging.saveErrorLog('ERROR updating user "isUploading" to true: ');
+          errorLogging.saveErrorLog(err);
           crashReport(res, req.user.id, videoId, videoHash, searchId);
         })
 
         if (process.env.NODE_ENV === 'production') {
           videoIndex.addObject(videoObj, (err, videoContent) => {
             if (err) {
-              console.error(err);
+              errorLogging.saveErrorLog(err);
               crashReport(res, req.user.id, videoId, videoHash, searchId);
               return res.status(500).json(err);
             }
@@ -194,7 +182,7 @@ videoUploadController.upload = (req, res) => {
             result.updateAttributes({
               searchId,
             });
-            console.log('Video was added to the index');
+            errorLogging.saveInfoLog("video was added to the index");
             res.status(200).json({ videoId: result.id, searchId });
             channelIndex.partialUpdateObject({
               videos: {
@@ -204,10 +192,10 @@ videoUploadController.upload = (req, res) => {
               objectID: fields.channelSearchId,
             }, (err2) => {
               if (err2) {
-                console.error(err2);
+                errorLogging.saveErrorLog(err2);
                 crashReport(res, req.user.id, videoId, videoHash, searchId);
               }
-              console.log('Video objectID was added to Channel index');
+              errorLogging.saveErrorLog('Video objectID was added to Channel index');
             });
           });
         }
@@ -221,23 +209,25 @@ videoUploadController.upload = (req, res) => {
         upload.concurrentParts(5);
 
         upload.on('error', (error) => {
-          console.log(error);
+          errorLogging.saveErrorLog(error);
           crashReport(res, req.user.id, videoId, videoHash, searchId);
         });
 
         upload.on('part', (details) => {
-          console.log(details);
+          errorLogging.saveInfoLog(details);
           pusher.trigger('videos', `upload-progress-${req.user.id}`, { loaded: details.uploadedSize, total: file.size, videoId });
         });
 
         upload.on('uploaded', (details) => {
-          console.log('Video uploaded', details);
+          errorLogging.saveInfoLog("video uploaded ");
+          errorLogging.saveInfoLog(details);
 
           videoModel.updateVideo(videoId, req.user.id, videoHash, videoName, suffix)
           .then(function(){
 
           }).catch(function(err5){
-            console.log('FAILED updating video pathToOriginal in DB', err5);
+            errorLogging.saveErrorLog('FAILED updating video pathToOriginal in DB');
+            errorLogging.saveErrorLog(err5);
             crashReport(res, req.user.id, videoId, videoHash, searchId);
           })
 
@@ -292,16 +282,16 @@ videoUploadController.upload = (req, res) => {
                         objectID: searchId,
                       }, (error) => {
                         if (error) {
-                          console.error(error);
+                          errorLogging.saveErrorLog(error);
                         } else {
-                          console.log('Video thumbnail is updated');
+                          errorLogging.saveInfoLog('Video thumbnail is updated');
                         }
                       });
                     }
 
                     s3.copyObject({ CopySource: `${process.env.AWS_VIDEO_BUCKET}/${oldKey}`, Key: newKey },
                     (err4) => {
-                      if (err4) return console.log('ERROR 4!!!!', err4.stack);
+                      if (err4) return errorLogging.saveErrorLog(err4.stack);
                       s3.deleteObjects({
                         Delete: {
                           Objects: objList,
@@ -315,13 +305,13 @@ videoUploadController.upload = (req, res) => {
                     });
                   }
                   videoModel.updateVideoPath(videopaths, result2.id)
-                  .then(() => console.log('Video path successfully updated'))
+                  .then(() => errorLogging.saveInfoLog('Video path successfully updated'))
                   .catch((err3) => {
-                    console.log('Video path update error', err3);
+                    errorLogging.saveErrorLog(err3);
                     crashReport(res, req.user.id, videoId, videoHash, searchId);
                   });
                 } else {
-                  console.error(`Can't find the video with id (${result.id}) in video table`);
+                  errorLogging.saveErrorLog(`Can't find the video with id (${result.id}) in video table`);
                   crashReport(res, req.user.id, videoId, videoHash, searchId);
                 }
                 videoModel.setUploading(req.user.id, false)
@@ -329,27 +319,28 @@ videoUploadController.upload = (req, res) => {
 
                 })
                 .catch((userErr) => {
-                  console.log('ERROR updating user "isUploading" to false: ', userErr);
+                  errorLogging.saveErrorLog(userErr);
                   crashReport(res, req.user.id, videoId, videoHash, searchId);
                 });
                 pusher.trigger('videos', `upload-complete-${req.user.id}`, videoId);
               });
             });
           }).catch((err2) => {
-            console.log('Transcoder failed', err2);
+            errorLogging.saveErrorLog('Transcoder failed');
+            errorLogging.saveErrorLog(err2);
             crashReport(res, req.user.id, videoId, videoHash, searchId);
           });
         });
         const read = fs.createReadStream(file.path, { highWaterMark: 65536 }); // try 32768 131072
         read.pipe(upload);
       }).catch(function(err){
-        console.log(err);
+        errorLogging.saveErrorLog(err);
         crashReport(res, req.user.id);
         return res.status(500).json({ message: `Failed to create Video record in DB: ${err}` });
       })
     });
   } else {
-    console.log('FAILED!');
+    errorLogging.saveErrorLog('FAILED!');
     crashReport(res, req.user.id);
     return res.status(500).json({ message: 'Not authorized to upload video' });
   }

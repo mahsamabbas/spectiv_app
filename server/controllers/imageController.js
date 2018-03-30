@@ -2,7 +2,7 @@ import AWS from 'aws-sdk';
 import _ from 'lodash';
 import async from 'async';
 import fetch from 'node-fetch';
-
+const errorLogging = require('./../config/logging');
 import db from '../models';
 import { videoIndex, channelIndex } from './../config/algolia';
 
@@ -17,7 +17,7 @@ function handleSearchIndexUpdate(key, searchId) {
     async.series([
       cb => {
         if (process.env.NODE_ENV !== 'production') {
-          console.log('Algolia disabled outside of production. resolving');
+          errorLogging.saveErrorLog("Algolia disabled outside of production. resolving");
           return resolve();
         }
         return cb();
@@ -41,7 +41,7 @@ function handleSearchIndexUpdate(key, searchId) {
           searchId,
           (error2, channelContent) => {
             if (error2) {
-              console.error(error2);
+              errorLogging.saveErrorLog(error2);
               return cb(error2);
             }
             if (channelContent.videos) {
@@ -65,7 +65,7 @@ function handleSearchIndexUpdate(key, searchId) {
           channelVideos,
           err => {
             if (err) {
-              console.error(err);
+              errorLogging.saveErrorLog(err);
               return cb(err);
             }
             return cb();
@@ -164,7 +164,7 @@ function handleAvatarUpload(req) {
             return cb();
           })
           .catch(err => {
-            console.error(err);
+            errorLogging.saveErrorLog(err);
             return cb(err);
           });
       }
@@ -198,7 +198,7 @@ imageController.upload = (req, res) => {
         }, () => {
           s3.upload({ Body: req.file.buffer }, (err2) => {
             if (err2) {
-              console.error(err2);
+              errorLogging.saveErrorLog(err2);
               return res.status(500).json({ Err: err2 });
             }
           }).send(() => {
@@ -210,7 +210,7 @@ imageController.upload = (req, res) => {
                 objectID: searchId,
               }, (error) => {
                 if (error) {
-                  console.error(error);
+                  errorLogging.saveErrorLog(error);
                 }
               });
             }
@@ -233,7 +233,7 @@ imageController.upload = (req, res) => {
           return res.status(200).json({ avatarPath: path });
         })
         .catch((err) => {
-          console.error(err);
+          errorLogging.saveErrorLog(err);
           return res.status(500).json({ Err: err });
         });
     }

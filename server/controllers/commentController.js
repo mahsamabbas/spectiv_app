@@ -1,4 +1,5 @@
 import db from './../models';
+const errorLogging = require('./../config/logging');
 
 const commentController = {};
 
@@ -76,7 +77,7 @@ commentController.getComments = (req, res) => {
         });
       });
     }).catch((err) => {
-      console.log(err);
+      errorLogging.saveErrorLog(err);
       return res.status(500).json({
         err,
       });
@@ -157,7 +158,7 @@ commentController.getSubComments = (req, res) => {
       success: true,
     });
   }).catch((err) => {
-    console.error(err);
+    errorLogging.saveErrorLog(err);
     res.status(500).json({
       err,
     });
@@ -183,7 +184,7 @@ commentController.createComment = (req, res) => {
         success: true,
       });
     }).catch((err) => {
-      console.error(err);
+      errorLogging.saveErrorLog(err);
       res.status(500).json({
         err,
       });
@@ -213,7 +214,7 @@ commentController.editComment = (req, res) => {
           success: true,
         });
       }).catch((err) => {
-        console.error(err);
+        errorLogging.saveErrorLog(err);
         res.status(500).json({
           err,
           success: false,
@@ -241,6 +242,7 @@ commentController.deleteComment = (req, res) => {
           id: comment.id,
         },
       }).then(() => {
+        errorLogging.saveInfoLog("comment: "+comment.id+" is deleted");
         res.status(200).json({
           success: true,
         });

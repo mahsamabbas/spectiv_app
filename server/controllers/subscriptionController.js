@@ -2,6 +2,7 @@ import _ from 'lodash';
 import db from './../models';
 import { channelIndex } from './../config/algolia';
 const subscriptionModel = require('./../models/UserSubscription');
+const errorLogging = require('./../config/logging');
 const subscriptionController = {};
 
 subscriptionController.getAllSubscription = (req, res) => {
@@ -39,9 +40,9 @@ subscriptionController.newSubscription = (req, res) => {
             objectID: searchId,
           }, (err, content) => {
             if (err) {
-              console.error(err);
+              errorLogging.saveErrorLog(err);
             }
-            console.log('Channel Subscriber Incremented');
+            errorLogging.saveInfoLog('Channel Subscriber Incremented');
           });
         }
       return res.status(200).json(userSub);
@@ -72,9 +73,9 @@ subscriptionController.deleteSubscription = (req, res) => {
           objectID: searchId,
         }, (err, content) => {
           if (err) {
-            console.error(err);
+            errorLogging.saveErrorLog(err);
           }
-          console.log('Channel Subscriber Decremented');
+          errorLogging.saveInfoLog('Channel Subscriber Decremented');
         });
       }
 

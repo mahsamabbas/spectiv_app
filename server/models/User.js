@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt-nodejs';
 import db from './../models';
+const errorLogging = require('./../config/logging');
 
 const SALT_WORK_FACTOR = 12;
 
@@ -8,7 +9,7 @@ const classMethods = {
     validatePassword: (password, pwd, done, user) => {
       bcrypt.compare(password, pwd, (err, isMatch) => {
         if (err) {
-          console.error(err);
+          errorLogging.saveErrorLog(err);
         }
         if (isMatch) {
           return done(null, user);
@@ -56,13 +57,13 @@ export default (sequelize, DataTypes) => {
   }, classMethods);
 
   User.hook('beforeCreate', (user, options, fn) => {
-    console.log(fn);
+    errorLogging.saveInfoLog(fn);
     const salt = bcrypt.genSalt(SALT_WORK_FACTOR, (err, gennedSalt) => {
       return gennedSalt;
     });
     bcrypt.hash(user.password, salt, null, (err, hash) => {
       if (err) {
-        console.error(err);
+        errorLogging.saveErrorLog(err);
       }
       user.password = hash;
       return fn(null, user);

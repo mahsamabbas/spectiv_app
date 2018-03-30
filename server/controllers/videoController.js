@@ -1,10 +1,9 @@
 import _ from 'lodash';
-
+const errorLogging = require('./../config/logging');
 import db from './../models';
 import createTags from './../lib/tag/createTags';
 import updateTags from './../lib/tag/updateTags';
 import { videoIndex } from './../config/algolia';
-
 const videoController = {};
 
 videoController.createVideo = (req, res) => {
@@ -43,11 +42,11 @@ videoController.createVideo = (req, res) => {
             createdVideo,
           });
         }).catch((err) => {
-          console.log(err);
+          errorLogging.saveErrorLog(err);
           return res.status(500).json({ err });
         });
       }).catch((err) => {
-        console.log(err);
+        errorLogging.saveErrorLog(err);
         return res.status(500).json({
           err,
         });
@@ -58,7 +57,7 @@ videoController.createVideo = (req, res) => {
       });
     }
   }).catch((err) => {
-    console.log(err);
+    errorLogging.saveErrorLog(err);
     res.status(500).json({ err });
   });
 };
@@ -113,8 +112,7 @@ videoController.updateVideo = (req, res) => {
         desc,
         objectID: searchId,
       }, (err, content) => {
-        if (err) { console.error(err); }
-        console.log('Video index was updated');
+        if (err) { errorLogging.saveErrorLog(err); }
       });
     }
     updateTags(cleanTags, id, videoId).then((createdTags) => {
@@ -130,15 +128,15 @@ videoController.updateVideo = (req, res) => {
           createdVideoTags,
         });
       }).catch((err) => {
-        console.log(err);
+        errorLogging.saveErrorLog(err);
         return res.status(500).json({ err });
       });
     }).catch((err) => {
-      console.log(err);
+      errorLogging.saveErrorLog(err);
       return res.status(500).json({ err });
     });
   }).catch((err) => {
-    console.log(err);
+    errorLogging.saveErrorLog(err);
     return res.status(500).json({ err });
   });
 };
@@ -201,8 +199,8 @@ videoController.getVideo = (req, res) => {
         },
         objectID: video.searchId,
       }, (err, content) => {
-        if (err) { console.error(err); }
-        console.log('Video Index view was incremented');
+        if (err) { errorLogging.saveErrorLog(err); }
+        errorLogging.saveInfoLog('Video Index view was incremented');
       });
     }
     let owner = false;
@@ -243,7 +241,8 @@ videoController.getVideo = (req, res) => {
       });
     }
   }).catch((err) => {
-    console.error(err);
+    errorLogging.saveErrorLog(err);
+
     return res.status(500).json({
       err,
     });
@@ -292,7 +291,7 @@ videoController.getEditVideo = (req, res) => {
       success: true,
     });
   }).catch((err) => {
-    console.log(err);
+    errorLogging.saveErrorLog(err);
     return res.status(500).json({
       err,
     });
@@ -453,7 +452,7 @@ videoController.recommendedVideos = (req, res) => {
       success: true,
     });
   }).catch((err) => {
-    console.error(err);
+    errorLogging.saveErrorLog(err);
     return res.status(500).json({
       err,
     });
@@ -483,12 +482,12 @@ videoController.getFeaturedChannelVideos = (req, res) => {
       },
     ],
   }).then((channel) => {
-    console.log(channel);
+    errorLogging(channel);
     return res.status(200).json({
       channel,
     });
   }).catch((err) => {
-    console.log(err);
+    errorLogging.saveErrorLog(err);
     return res.status(500).json({
       err,
     });

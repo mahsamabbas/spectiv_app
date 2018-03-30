@@ -1,6 +1,6 @@
 import db from './../models';
 import { videoIndex } from './../config/algolia';
-
+const errorLogging = require('./../config/logging');
 const rateController = {};
 
 rateController.getRates = (req, res) => {
@@ -36,7 +36,7 @@ rateController.getRates = (req, res) => {
         });
       });
     }).catch((err) => {
-      console.error(err);
+      errorLogging.saveErrorLog(err);
       res.status(500).json({
         err,
       });
@@ -99,9 +99,9 @@ rateController.rateVideo = (req, res) => {
             objectID: searchId,
           }, (err, content) => {
             if (err) {
-              console.error(err);
+              errorLogging.saveErrorLog(err);
             }
-            console.log('Video Like Incremented');
+            errorLogging.saveInfoLog('Video Like Incremented');
           });
         }
       }
@@ -125,7 +125,7 @@ rateController.rateVideo = (req, res) => {
         });
       }
     }).catch((err) => {
-      console.error(err);
+      errorLogging.saveErrorLog(err);
       res.status(500).json({
         err,
       });
@@ -160,9 +160,9 @@ rateController.destroyRate = (req, res) => {
             objectID: searchId,
           }, (err, content) => {
             if (err) {
-              console.error(err);
+              errorLogging.saveErrorLog(err);
             }
-            console.log('Video Like Decremented');
+            errorLogging.saveInfoLog('Video Like Decremented');
           });
         }
       }
@@ -171,7 +171,7 @@ rateController.destroyRate = (req, res) => {
         success: true,
       });
     }).catch((err) => {
-      console.error(err);
+      errorLogging.saveErrorLog(err);
       return res.status(500).json({
         err,
       });

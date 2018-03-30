@@ -1,4 +1,5 @@
 import db from "./../models";
+const errorLogging = require('./../config/logging');
 export default (sequelize, DataTypes) => {
   const Channel = sequelize.define('Channel', {
     name: {
@@ -56,11 +57,10 @@ var a = new Promise(function(resolve,reject){
     ]
   }).then(function(channel){
     if(channel){
-      //console.log(channel);
      resolve(channel);
     }else{
-      //reject({message: "You do not have a channel."});
-      console.log("channel not found");
+      reject({message: "You do not have a channel."});
+      errorLogging.saveErrorLog("channel not found");
     }
   }).catch(function(err){
     reject(err);
@@ -76,7 +76,6 @@ var b = a.then(function(channel){
       },
       attributes: ["avatarPath"]
     }).then(function(user){
-      //console.log(user);
       resolve(user);
     }).catch(function(err){
       reject(err);
@@ -86,7 +85,6 @@ var b = a.then(function(channel){
 
 return Promise.all([a,b])
 .then(function([channel, user]){
-  console.log(user);
   var data = {
     channel,
     user: user
@@ -114,6 +112,7 @@ exports.createChannel = function(user, channelData){
         businessEmail,
         color
       }).then(function(channel){
+        errorLogging.saveInfoLog("A channel: "+channel.name+" is created");
         resolve(channel);
       }).catch( function(err){
         reject(err);
@@ -153,12 +152,12 @@ exports.createChannel = function(user, channelData){
           if (process.env.NODE_ENV === 'production') {
             channelIndex.addObject(channelObj, (error, channelContent) => {
               if (error) {
-                console.error(error);
+                errorLogging.saveErrorLog(error);
               }
               channel.updateAttributes({
                 searchId: channelContent.objectID
               });
-              console.log("Channel was added to the index");
+              errorLogging.saveInfoLog("Channel was added to the index");
               resolve(channel);
             });
           }
@@ -181,7 +180,6 @@ exports.createChannel = function(user, channelData){
 
     return Promise.all([a,b,c])
     .then(function([channel1, channel2, channel3]){
-      console.log(channel3);
       var data = {
         channel3
       }
@@ -217,12 +215,12 @@ exports.updateChannel = function (channelData){
             },
             err => {
               if (err) {
-                console.error(err);
+                errorLogging.saveErrorLog(err);
               } else {
-                console.log("Channel info in search index is updated");
+                errorLogging.saveInfoLog("Channel info in search index is updated");
                 channelIndex.getObject(searchId, (err2, channelContent) => {
                   if (err2) {
-                    console.error(err2);
+                    errorLogging.saveErrorLog(err2);
                   }
                   const channelVideos = channelContent.videos.map(vidId => {
                     return {
@@ -234,9 +232,9 @@ exports.updateChannel = function (channelData){
                   });
                   videoIndex.partialUpdateObjects(channelVideos, err3 => {
                     if (err3) {
-                      console.error(err3);
+                      errorLogging.saveErrorLog(err3);
                     } else {
-                      console.log("Channel info on videos are updated");
+                      errorLogging.saveInfoLog("Channel info on videos are updated");
                     }
                   });
                 });
