@@ -60,7 +60,6 @@ var a = new Promise(function(resolve,reject){
      resolve(channel);
     }else{
       reject({message: "You do not have a channel."});
-      errorLogging.saveErrorLog("channel not found");
     }
   }).catch(function(err){
     reject(err);
@@ -157,7 +156,7 @@ exports.createChannel = function(user, channelData){
               channel.updateAttributes({
                 searchId: channelContent.objectID
               });
-              errorLogging.saveInfoLog("Channel was added to the index");
+              errorLogging.saveInfoLog("Channel: "+channel.name+" was added to the index");
               resolve(channel);
             });
           }
@@ -171,6 +170,7 @@ exports.createChannel = function(user, channelData){
       return new Promise(function(resolve, reject){
         createCategories(categories, channel.id)
         .then(function(channel){
+          errorLogging.saveInfoLog("Categories are created for the channel: "+channel.id);
           resolve(channel);
         }).catch(function(err){
           reject(err);
@@ -234,7 +234,7 @@ exports.updateChannel = function (channelData){
                     if (err3) {
                       errorLogging.saveErrorLog(err3);
                     } else {
-                      errorLogging.saveInfoLog("Channel info on videos are updated");
+                      errorLogging.saveInfoLog("Channel info and videos are updated");
                     }
                   });
                 });
@@ -244,6 +244,7 @@ exports.updateChannel = function (channelData){
         }
         // if ends
         resolve({ msg: "success" });
+        errorLogging.saveInfoLog("channel is updated for id: "+channelData.id);
       }).catch(function(err){
         reject(err);
       })

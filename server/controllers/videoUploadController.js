@@ -115,6 +115,7 @@ videoUploadController.delete = (req, res) => {
                 res.status(200).json(data2);
               });
             } else {
+              errorLogging.saveInfoLog("video is deleted with Id: "+videoId);
               res.status(200).json(data2);
             }
           }).catch(function(err){
@@ -342,6 +343,7 @@ videoUploadController.upload = (req, res) => {
   } else {
     errorLogging.saveErrorLog('FAILED!');
     crashReport(res, req.user.id);
+    errorLogging.saveErrorLog("not authorized to upload video for the user: "+req.user.id);
     return res.status(500).json({ message: 'Not authorized to upload video' });
   }
 };

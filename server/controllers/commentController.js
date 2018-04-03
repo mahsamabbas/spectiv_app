@@ -178,6 +178,7 @@ commentController.createComment = (req, res) => {
       parentCommentId: parentId,
       replyCommentId: replyId,
     }).then((comm) => {
+      errorLogging.saveInfoLog("comment is created for the user: "+id);
       res.status(200).json({
         comment: comm,
         user: req.user.username,
@@ -209,6 +210,7 @@ commentController.editComment = (req, res) => {
           id,
         },
       }).then((newComment) => {
+        errorLogging.saveInfoLog("comment is edited with id: "+newComment.id);
         res.status(200).json({
           comment: newComment,
           success: true,
@@ -226,6 +228,7 @@ commentController.editComment = (req, res) => {
       });
     }
   } else {
+    errorLogging.saveErrorLog("user not loggedin or authorized to edit comment with id: "+comment.id);
     res.status(401).json({
       login: false,
     });
@@ -242,7 +245,7 @@ commentController.deleteComment = (req, res) => {
           id: comment.id,
         },
       }).then(() => {
-        errorLogging.saveInfoLog("comment: "+comment.id+" is deleted");
+        errorLogging.saveInfoLog("comment with Id: "+comment.id+" is deleted");
         res.status(200).json({
           success: true,
         });
@@ -257,6 +260,7 @@ commentController.deleteComment = (req, res) => {
       });
     }
   } else {
+    errorLogging.saveErrorLog("user not loggedin or authorized to delete comment with id: "+comment.id);
     res.status(401).json({
       login: false,
     });

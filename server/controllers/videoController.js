@@ -200,7 +200,7 @@ videoController.getVideo = (req, res) => {
         objectID: video.searchId,
       }, (err, content) => {
         if (err) { errorLogging.saveErrorLog(err); }
-        errorLogging.saveInfoLog('Video Index view was incremented');
+        errorLogging.saveInfoLog('Video Index view was incremented for the videoId: '+videoId);
       });
     }
     let owner = false;
@@ -254,6 +254,7 @@ videoController.getEditVideo = (req, res) => {
   const { id } = req.user;
 
   if (!videoId) {
+    errorLogging.saveErrorLog("video id is required to edit video");
     return res.status(500).json({
       message: 'Video ID is required.',
     });

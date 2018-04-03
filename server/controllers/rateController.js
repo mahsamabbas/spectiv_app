@@ -101,7 +101,7 @@ rateController.rateVideo = (req, res) => {
             if (err) {
               errorLogging.saveErrorLog(err);
             }
-            errorLogging.saveInfoLog('Video Like Incremented');
+            errorLogging.saveInfoLog('Video Like Incremented for the videoId: '+videoId);
           });
         }
       }
@@ -162,7 +162,7 @@ rateController.destroyRate = (req, res) => {
             if (err) {
               errorLogging.saveErrorLog(err);
             }
-            errorLogging.saveInfoLog('Video Like Decremented');
+            errorLogging.saveInfoLog('Video Like Decremented for the videoId: '+videoId);
           });
         }
       }

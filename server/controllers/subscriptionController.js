@@ -42,7 +42,7 @@ subscriptionController.newSubscription = (req, res) => {
             if (err) {
               errorLogging.saveErrorLog(err);
             }
-            errorLogging.saveInfoLog('Channel Subscriber Incremented');
+            errorLogging.saveInfoLog('Channel Subscriber Incremented for the channelId: '+channelId);
           });
         }
       return res.status(200).json(userSub);
@@ -50,6 +50,7 @@ subscriptionController.newSubscription = (req, res) => {
       return res.status(500).json( err );
     })
   } else {
+    errorLogging.saveErrorLog("User is not loggedin / Authorized to subscribe a channel with id: "+channelId);
     return res.status(401).json({
       login: false,
       message: 'User is not logged in.',
@@ -75,7 +76,7 @@ subscriptionController.deleteSubscription = (req, res) => {
           if (err) {
             errorLogging.saveErrorLog(err);
           }
-          errorLogging.saveInfoLog('Channel Subscriber Decremented');
+          errorLogging.saveInfoLog('Channel Subscriber Decremented for the channelId: '+channelId);
         });
       }
 

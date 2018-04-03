@@ -29,7 +29,6 @@ userController.checkUploading = (req, res) => {
 };
 
 userController.signUp = (req, res) => {
-  errorLogging.saveErrorLog("clicked on signup page");
   if (req.isAuthenticated()) {
     return res.redirect('/');
   }
@@ -282,6 +281,8 @@ userController.apply = (req, res) => {
     .then(function(data){
       return res.status(200).json(data);
     }).catch(function(err){
+      errorLogging.saveErrorLog("there was internal server error while clicking on apply for the user: "+req.user.id);
+      errorLogging.saveErrorLog(err);
       return res.write('There was an internal server error.');
     })
   } else {
@@ -298,6 +299,7 @@ userController.submitApplication = (req, res) => {
     const { id } = req.user;
     userModel.submitApplication(id, technology, yesNo, explain)
     .then(function(){
+      errorLogging.saveInfoLog("new application is submited by the user: "+req.user);
       return res.status(200).json({
         success: true,
       });
@@ -326,6 +328,7 @@ userController.editUserInfo = (req, res) => {
 
   userModel.editUserInfo(id, firstName, lastName, email)
   .then(function(){
+    errorLogging.saveInfoLog("user information is edited for the user "+req.user);
     return res.status(200).json({success:true,})
   }).catch(function(err){
     return res.status(500).json({err});
@@ -358,7 +361,7 @@ userController.editPassword = (req, res) => {
             errorLogging.saveErrorLog(error);
           }
         });
-
+        errorLogging.saveInfoLog("Password is changed for the user: "+req.user);
         return res.status(200).json({
           success: true,
         });

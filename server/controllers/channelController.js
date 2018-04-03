@@ -23,6 +23,7 @@ channelController.getChannel = (req, res) => {
 channelController.myChannel = (req, res) => {
 
   if (!req.user) {
+    errorLogging.saveErrorLog("channel not found for the user: "+req.user.id);
     return res.status(401).json({
       message: "Channel Not Found"
     });
