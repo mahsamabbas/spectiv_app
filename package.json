@@ -106,7 +106,8 @@
     "webpack": "^2.2.0",
     "webpack-dev-middleware": "^1.12.2",
     "webpack-hot-middleware": "^2.21.2",
-    "webpack-dev-server":"^2.2.0"
+    "webpack-dev-server":"^2.2.0",
+    "react-hot-loader":"4.0.1"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
