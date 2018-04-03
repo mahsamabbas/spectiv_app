@@ -42,9 +42,9 @@ subscriptionController.newSubscription = (req, res) => {
             if (err) {
               errorLogging.saveErrorLog(err);
             }
-            errorLogging.saveInfoLog('Channel Subscriber Incremented for the channelId: '+channelId);
           });
         }
+        errorLogging.saveInfoLog('Channel Subscriber Incremented for the channelId: '+channelId);
       return res.status(200).json(userSub);
     }).catch(function(err){
       return res.status(500).json( err );
@@ -76,10 +76,9 @@ subscriptionController.deleteSubscription = (req, res) => {
           if (err) {
             errorLogging.saveErrorLog(err);
           }
-          errorLogging.saveInfoLog('Channel Subscriber Decremented for the channelId: '+channelId);
         });
       }
-
+      errorLogging.saveInfoLog('Channel Subscriber Decremented for the channelId: '+channelId);
       return res.status(200).json({ userSub, success: true });
     }).catch(function(err){
       return res.status(500).json({ err });
