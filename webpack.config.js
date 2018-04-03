@@ -6,12 +6,6 @@ export default {
   devtool: 'source-map',
   entry: [
 
-    // 'webpack-dev-server/client?http://localhost:1337',
-    // 'webpack/hot/dev-server',
-    // './client/main.js'
-    // 'webpack-hot-middleware/client?path=/__webpack_hmr',
-    // path.join(__dirname, 'client/main.js'),
-    //'react-hot-loader/patch',
     'webpack-hot-middleware/client?reload=true/__webpack_hmr',
     path.join(__dirname, 'client/main.js'),
     
