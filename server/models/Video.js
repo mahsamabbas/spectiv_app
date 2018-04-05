@@ -32,49 +32,49 @@ export default (sequelize, DataTypes) => {
 };
 
 // TODO - move to  User model
-exports.setUploading = function (userId, boolVal) {
+exports.setUploading = (userId, boolVal) => {
 
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     db.User.update({
       isUploading: boolVal,
     }, {
         where: {
           id: userId,
         },
-      }).then(function () {
+      }).then(() => {
         resolve();
-      }).catch(function (err) {
+      }).catch((err) => {
         reject(err);
       })
   });
 }
 
-exports.markDeleted = function (videoId) {
-  return new Promise(function (resolve, reject) {
+exports.markDeleted = (videoId) => {
+  return new Promise((resolve, reject) => {
     db.Video.update({ isDeleted: true }, { where: { id: videoId } })
-      .then(function () {
+      .then(() => {
         resolve();
       })
-      .catch(function (err3) {
+      .catch((err3) => {
         reject(err3);
       });
   });
 }
 
-exports.updateVideoDelete = function (videoId) {
-  return new Promise(function (resolve, reject) {
+exports.updateVideoDelete = (videoId) => {
+  return new Promise((resolve, reject) => {
     db.Video.update({ isDeleted: true }, { where: { id: videoId } })
-      .then(function () {
+      .then(() => {
         resolve();
       })
-      .catch(function (err3) {
+      .catch((err3) => {
         reject(err3);
       });
   });
 }
 
-exports.videoCreate = function (fileName, ChannelId, videoDuration) {
-  return new Promise(function (resolve, reject) {
+exports.videoCreate = (fileName, ChannelId, videoDuration) => {
+  return new Promise((resolve, reject) => {
     db.Video.create({
       filename: fileName,
       title: fileName.split('/').reverse()[0].split('.')[0],
@@ -87,69 +87,69 @@ exports.videoCreate = function (fileName, ChannelId, videoDuration) {
       canLike: true,
       canComment: true,
       duration: videoDuration,
-    }).then(function (result) {
+    }).then((result) => {
       resolve(result);
-    }).catch(function (err) {
+    }).catch((err) => {
       reject(err);
     })
   });
 }
 
-exports.updateVideo = function (videoId, userId, videoHash, videoName, suffix) {
-  return new Promise(function (resolve, reject) {
+exports.updateVideo = (videoId, userId, videoHash, videoName, suffix) => {
+  return new Promise((resolve, reject) => {
     db.Video.update({
       pathToOriginal: `${process.env.AWS_VIDEO_CDN}/user_${userId}/${videoHash}/${videoName}.${suffix}`,
     }, {
         where: { id: videoId },
-      }).then(function () {
+      }).then(() => {
         resolve();
-      }).catch(function (err5) {
+      }).catch((err5) => {
         reject(err5);
         
       });
   });
 }
 
-exports.findById = function (videoId) {
-  return new Promise(function (resolve, reject) {
+exports.findById = (videoId) => {
+  return new Promise((resolve, reject) => {
     db.Video.findOne({
       where: { id: videoId, isDeleted: false },
-    }).then(function (result2) {
+    }).then((result2) => {
       resolve(result2);
-    }).catch(function (err) {
+    }).catch((err) => {
       reject(err);
     })
   });
 }
 
-exports.updateVideoPath = function (videopaths, videoId) {
-  return new Promise(function (resolve, reject) {
+exports.updateVideoPath = (videopaths, videoId) => {
+  return new Promise((resolve, reject) => {
     db.Video.update({
       ...videopaths,
     }, {
         where: { id: videoId, isDeleted: false },
-      }).then(function () {
+      }).then(() => {
         resolve();
-      }).catch(function (err3) {
+      }).catch((err3) => {
         reject(err3);
       })
   });
 }
 
-exports.deleteVideo = function (videoId) {
-  return new Promise(function (resolve, reject) {
+exports.deleteVideo = (videoId) => {
+  return new Promise((resolve, reject) => {
     db.Video.update({ isDeleted: true }, { where: { id: videoId } })
-      .then(function () {
+      .then(() => {
         resolve();
-      }).catch(function (err) {
+      }).catch((err) => {
         reject(err);
       })
   });
 }
 
-exports.getVideoInfo = function (videoId) {
+exports.getVideoInfo = (videoId) => {
   const { id } = videoId;
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     db.Video.findOne({
       where: { id },
       include: [{
@@ -160,11 +160,11 @@ exports.getVideoInfo = function (videoId) {
         },
         attributes: ['id', 'name'],
       }],
-    }).then(function (data) {
+    }).then((data) => {
       const { title, desc, thumbnailPath, canLike, canComment, accessibility } = data;
       const tags = data.Tags;
       resolve({ title, desc, thumbnailPath, canLike, canComment, accessibility, tags });
-    }).catch(function (err) {
+    }).catch((err) => {
       reject(err);
     })
   });

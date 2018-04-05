@@ -30,9 +30,9 @@ export default (sequelize, DataTypes) => {
   return Channel;
 };
 
-exports.myChannel = function (user) {
+exports.myChannel =  (user) => {
 
-  var a = new Promise(function (resolve, reject) {
+  var a = new Promise( (resolve, reject) => {
     db.Channel.findOne({
       where: { userId: user.id },
       attributes: {
@@ -54,7 +54,7 @@ exports.myChannel = function (user) {
           order: [["createdAt", "DESC"]]
         }
       ]
-    }).then(function (channel) {
+    }).then((channel) => {
       if (channel) {
         //console.log(channel);
         resolve(channel);
@@ -62,30 +62,30 @@ exports.myChannel = function (user) {
         //reject({message: "You do not have a channel."});
         console.log("channel not found");
       }
-    }).catch(function (err) {
+    }).catch((err) => {
       reject(err);
     });
   });
 
-  var b = a.then(function (channel) {
+  var b = a.then((channel) => {
 
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
       db.User.findOne({
         where: {
           id: channel.userId
         },
         attributes: ["avatarPath"]
-      }).then(function (user) {
+      }).then((user) => {
         //console.log(user);
         resolve(user);
-      }).catch(function (err) {
+      }).catch((err) => {
         reject(err);
       })
     })
   });
 
   return Promise.all([a, b])
-    .then(function ([channel, user]) {
+    .then(([channel, user]) => {
       console.log(user);
       var data = {
         channel,
@@ -93,11 +93,11 @@ exports.myChannel = function (user) {
       }
       return data;
 
-    }).catch(function (err) {
+    }).catch((err) => {
     })
 }
 
-exports.createChannel = function (user, channelData) {
+exports.createChannel = (user, channelData) => {
   const { id } = user;
   const { name, desc, businessEmail, categories, color } = channelData;
   const channelURL = name
@@ -105,7 +105,7 @@ exports.createChannel = function (user, channelData) {
     .trim()
     .replace(/\s+/g, "_");
 
-  var a = new Promise(function (resolve, reject) {
+  var a = new Promise((resolve, reject) => {
     db.Channel.create({
       userId: id,
       name,
@@ -113,18 +113,18 @@ exports.createChannel = function (user, channelData) {
       desc,
       businessEmail,
       color
-    }).then(function (channel) {
+    }).then((channel) => {
       resolve(channel);
-    }).catch(function (err) {
+    }).catch((err) => {
       reject(err);
     })
   });
 
-  var b = a.then(function (channel) {
-    return new Promise(function (resolve, reject) {
+  var b = a.then((channel) => {
+    return new Promise((resolve, reject) => {
       db.User.findOne({
         where: { id }
-      }).then(function (user) {
+      }).then((user) => {
         let channelObj;
         if (user.avatarPath !== null) {
           channelObj = {
@@ -162,41 +162,41 @@ exports.createChannel = function (user, channelData) {
             resolve(channel);
           });
         }
-      }).catch(function (err) {
+      }).catch((err) => {
         reject(err);
       })
     });
   });
 
-  var c = b.then(function (channel) {
-    return new Promise(function (resolve, reject) {
+  var c = b.then((channel) => {
+    return new Promise((resolve, reject) => {
       createCategories(categories, channel.id)
-        .then(function (channel) {
+        .then((channel) => {
           resolve(channel);
-        }).catch(function (err) {
+        }).catch((err) => {
           reject(err);
         });
     });
   });
 
   return Promise.all([a, b, c])
-    .then(function ([channel1, channel2, channel3]) {
+    .then(([channel1, channel2, channel3]) => {
       console.log(channel3);
       var data = {
         channel3
       }
       return data;
-    }).catch(function (err) { });
+    }).catch((err) => { });
 };
 
-exports.updateChannel = function (channelData) {
+exports.updateChannel = (channelData) => {
   const { id, name, desc, businessEmail, color, searchId } = channelData;
   const channelURL = name
     .toLowerCase()
     .trim()
     .replace(/\s+/g, "_");
 
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     db.Channel.update(
       {
         name,
@@ -206,7 +206,7 @@ exports.updateChannel = function (channelData) {
         color
       },
       { where: { id } }
-    ).then(function () {
+    ).then(() => {
       if (searchId && process.env.NODE_ENV === 'production') {
         channelIndex.partialUpdateObject(
           {
@@ -246,12 +246,12 @@ exports.updateChannel = function (channelData) {
       }
       // if ends
       resolve({ msg: "success" });
-    }).catch(function (err) {
+    }).catch((err) => {
       reject(err);
     })
   });
 };
-exports.getAllFeatured = function () {
+exports.getAllFeatured = () => {
   return new Promise(function (resolve, reject) {
 
     db.Channel.findAll({
@@ -281,9 +281,9 @@ exports.getAllFeatured = function () {
         }
       ],
       limit: 4
-    }).then(function (channels) {
+    }).then((channels) => {
       resolve(channels, { success: true });
-    }).catch(function (err) {
+    }).catch((err) => {
       reject(err);
     })
   });
@@ -291,7 +291,7 @@ exports.getAllFeatured = function () {
 
 
 //this is a test and it is under construction
-exports.getOneByUrl = function (user, channelUrl) {
+exports.getOneByUrl = (user, channelUrl) => {
 
   let userId;
   if (user) {
@@ -303,7 +303,7 @@ exports.getOneByUrl = function (user, channelUrl) {
     .trim()
     .replace(/\s+/g, "_");
 
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     db.Channel.findOne({
       where: {
         channelURL
@@ -334,7 +334,7 @@ exports.getOneByUrl = function (user, channelUrl) {
         "searchId",
         "color"
       ]
-    }).then(function (channel) {
+    }).then((channel) => {
       if (channel) {
 
         db.User.findOne({
@@ -353,32 +353,32 @@ exports.getOneByUrl = function (user, channelUrl) {
 
               db.UserSubscription.count({
                 where: { channelId: channel.id }
-              }).then(function (count) {
+              }).then((count) => {
                 resolve({ channel, isUserChannel, isSubscribed, totalSubscriber: count });
-              }).catch(function (err) {
+              }).catch((err) => {
                 reject(err);
               })
             })
-              .catch(function (err) {
+              .catch((err) => {
                 reject(err);
               })
           } else {
             db.UserSubscription.count({
               where: { channelId: channel.id }
-            }).then(function (count) {
+            }).then((count) =>{
               resolve({ channel, totalSubscriber: count });
-            }).catch(function (err) {
+            }).catch((err) =>{
               reject(err);
             })
           }
-        }).catch(function (err) {
+        }).catch((err) => {
           reject(err);
         })
 
       } else {
         reject({ message: "Channel not found" });
       }
-    }).catch(function (err) {
+    }).catch((err) => {
       reject(err);
     })
   });

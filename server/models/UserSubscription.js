@@ -12,10 +12,10 @@ export default (sequelize, DataTypes) => {
   return UserSubscription;
 };
 
-exports.getAllByUserId = function (userId) {
+exports.getAllByUserId = (userId) => {
   const { id } = userId;
 
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     db.UserSubscription.findAll({
       where: { userId: id },
       group: ['UserSubscription.id', 'Channel.id', 'Channel.Videos.id', 'Channel.User.id'],
@@ -38,17 +38,17 @@ exports.getAllByUserId = function (userId) {
           }],
         },
       ],
-    }).then(function (subscriptions) {
+    }).then((subscriptions) => {
       resolve({ subscriptions, success: true, })
-    }).catch(function (err) {
+    }).catch((err) => {
       reject({ err });
     })
   });
 }
 
-exports.getUserSubscription = function (channelid, userId) {
+exports.getUserSubscription = (channelid, userId) => {
   const { channelId } = channelid;
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     if (userId) {
       const { id } = userId;
       db.UserSubscription.findOne({
@@ -86,8 +86,8 @@ exports.getUserSubscription = function (channelid, userId) {
   });
 }
 
-exports.createSubscription = function (channelId, userId) {
-  return new Promise(function (resolve, reject) {
+exports.createSubscription = (channelId, userId) => {
+  return new Promise((resolve, reject) => {
     db.UserSubscription.create(
       {
         userId: userId, channelId
@@ -96,24 +96,24 @@ exports.createSubscription = function (channelId, userId) {
           channelId,
           userId: userId,
         },
-      }).then(function (userSub) {
+      }).then((userSub) => {
         resolve(userSub);
-      }).catch(function (err) {
+      }).catch((err) => {
         reject({ err })
       });
   });
 }
 
-exports.removeSubscription = function (channelId, userId) {
-  return new Promise(function (resolve, reject) {
+exports.removeSubscription = (channelId, userId) => {
+  return new Promise((resolve, reject) => {
     db.UserSubscription.destroy({
       where: {
         channelId,
         userId: userId,
       },
-    }).then(function (userSub) {
+    }).then((userSub) => {
       resolve(userSub);
-    }).catch(function (err) {
+    }).catch((err) => {
       reject({ err });
     })
   });
