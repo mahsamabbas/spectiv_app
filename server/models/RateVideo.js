@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { videoIndex } from './../config/algolia';
+const search = require('./../config/search');
 
 
 export default (sequelize, DataTypes) => {
@@ -59,19 +60,22 @@ export default (sequelize, DataTypes) => {
             if (isLiked) {
               // DECREMENT VIDEO LIKES IF RATE WAS LIKE
               if (searchId && process.env.NODE_ENV === 'production') {
-                videoIndex.partialUpdateObject({
-                  likes: {
-                    value: 1,
-                    _operation: 'Decrement',
-                  },
-                  objectID: searchId,
-                }, err => {
-                  if (err) {
-                    return reject(err);
-                  }
-                  console.log('Video Like Decremented');
-                  resolve();
-                });
+                search.partialUpdateVideo({likes:{value:1, _operation:'Decrement'}, objectID: searchId});
+                console.log('Video Like Decremented');
+                resolve();
+                // videoIndex.partialUpdateObject({
+                //   likes: {
+                //     value: 1,
+                //     _operation: 'Decrement',
+                //   },
+                //   objectID: searchId,
+                // }, err => {
+                //   if (err) {
+                //     return reject(err);
+                //   }
+                //   console.log('Video Like Decremented');
+                //   resolve();
+                // });
               }
             }
 

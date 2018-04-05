@@ -1,4 +1,6 @@
 import db from "./../models";
+const search = require('./../config/search');
+
 export default (sequelize, DataTypes) => {
   const Channel = sequelize.define('Channel', {
     name: {
@@ -151,16 +153,26 @@ exports.createChannel = function (user, channelData) {
           };
         }
         if (process.env.NODE_ENV === 'production') {
-          channelIndex.addObject(channelObj, (error, channelContent) => {
-            if (error) {
-              console.error(error);
-            }
+          search.addObjectToChannel(channelObj)
+          .then(function(channelObj){
+            console.log("Channel was added to the search index");
             channel.updateAttributes({
-              searchId: channelContent.objectID
-            });
-            console.log("Channel was added to the index");
-            resolve(channel);
+                  searchId: channelContent.objectID
+                });
+                resolve(channel);
+          }).catch(function(){
+            console.log("Error occured while adding channel to index");
           });
+          // channelIndex.addObject(channelObj, (error, channelContent) => {
+          //   if (error) {
+          //     console.error(error);
+          //   }
+          //   channel.updateAttributes({
+          //     searchId: channelContent.objectID
+          //   });
+          //   console.log("Channel was added to the index");
+          //   resolve(channel);
+          // });
         }
       }).catch(function (err) {
         reject(err);
@@ -208,41 +220,64 @@ exports.updateChannel = function (channelData) {
       { where: { id } }
     ).then(function () {
       if (searchId && process.env.NODE_ENV === 'production') {
-        channelIndex.partialUpdateObject(
-          {
-            name,
-            desc,
-            channelColor: color,
-            objectID: searchId
-          },
-          err => {
-            if (err) {
-              console.error(err);
-            } else {
-              console.log("Channel info in search index is updated");
-              channelIndex.getObject(searchId, (err2, channelContent) => {
-                if (err2) {
-                  console.error(err2);
-                }
-                const channelVideos = channelContent.videos.map(vidId => {
-                  return {
-                    channelName: name,
-                    channelColor: color,
-                    channelUrl: channelURL,
-                    objectID: vidId
-                  };
-                });
-                videoIndex.partialUpdateObjects(channelVideos, err3 => {
-                  if (err3) {
-                    console.error(err3);
-                  } else {
-                    console.log("Channel info on videos are updated");
-                  }
-                });
-              });
-            }
-          }
-        );
+
+        search.partialUpdateChannel({name,desc,channelColor: color,objectID: searchId})
+        .then(function(object){
+          console.log("Channel info in search index is updated");
+          const channelVideos = channelContent.videos.map(vidId => {
+            return {
+              channelName: name,
+              channelColor: color,
+              channelUrl: channelURL,
+              objectID: vidId
+            };
+            search.partialUpdateVideo(channelVideos)
+            .then(function(object){
+              console.log("Channel info on videos are updated");
+            }).catch(function(){
+
+            });
+          });
+        }).catch(function(){
+
+        });
+
+      
+        // channelIndex.partialUpdateObject(
+        //   {
+        //     name,
+        //     desc,
+        //     channelColor: color,
+        //     objectID: searchId
+        //   },
+        //   err => {
+        //     if (err) {
+        //       console.error(err);
+        //     } else {
+        //       console.log("Channel info in search index is updated");
+        //       channelIndex.getObject(searchId, (err2, channelContent) => {
+        //         if (err2) {
+        //           console.error(err2);
+        //         }
+        //         const channelVideos = channelContent.videos.map(vidId => {
+        //           return {
+        //             channelName: name,
+        //             channelColor: color,
+        //             channelUrl: channelURL,
+        //             objectID: vidId
+        //           };
+        //         });
+        //         videoIndex.partialUpdateObjects(channelVideos, err3 => {
+        //           if (err3) {
+        //             console.error(err3);
+        //           } else {
+        //             console.log("Channel info on videos are updated");
+        //           }
+        //         });
+        //       });
+        //     }
+        //   }
+        // );
       }
       // if ends
       resolve({ msg: "success" });

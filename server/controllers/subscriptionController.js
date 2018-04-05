@@ -2,6 +2,7 @@ import _ from 'lodash';
 import db from './../models';
 import { channelIndex } from './../config/algolia';
 const subscriptionModel = require('./../models/UserSubscription');
+const search = require('./../config/search');
 const subscriptionController = {};
 
 subscriptionController.getAllSubscription = (req, res) => {
@@ -31,18 +32,22 @@ subscriptionController.newSubscription = (req, res) => {
       .then(function (userSub) {
         // INCREMENT CHANNEL SUBSCRIBER IN SEARCH INDEX
         if (searchId && process.env.NODE_ENV === 'production') {
-          channelIndex.partialUpdateObject({
-            subscribers: {
-              value: 1,
-              _operation: 'Increment',
-            },
-            objectID: searchId,
-          }, (err, content) => {
-            if (err) {
-              console.error(err);
-            }
-            console.log('Channel Subscriber Incremented');
-          });
+          search.partialUpdateChannel({subscribers:{value:1, _operation: 'Increment'},objectID: searchId})
+          .then(function(object){
+            console.log('Channel Subscriber Incremented and added to channelIndex');
+          })
+          // channelIndex.partialUpdateObject({
+          //   subscribers: {
+          //     value: 1,
+          //     _operation: 'Increment',
+          //   },
+          //   objectID: searchId,
+          // }, (err, content) => {
+          //   if (err) {
+          //     console.error(err);
+          //   }
+          //   console.log('Channel Subscriber Incremented');
+          // });
         }
         return res.status(200).json(userSub);
       }).catch(function (err) {
@@ -64,18 +69,22 @@ subscriptionController.deleteSubscription = (req, res) => {
     subscriptionModel.removeSubscription(channelId, id)
       .then(function (userSub) {
         if (searchId && process.env.NODE_ENV === 'production') {
-          channelIndex.partialUpdateObject({
-            subscribers: {
-              value: 1,
-              _operation: 'Decrement',
-            },
-            objectID: searchId,
-          }, (err, content) => {
-            if (err) {
-              console.error(err);
-            }
-            console.log('Channel Subscriber Decremented');
-          });
+          search.partialUpdateChannel({subscribers:{value:1, _operation: 'Decrement'},objectID: searchId})
+          .then(function(object){
+            console.log('Channel Subscriber Decremented and also updated to channelIndex');
+          })
+          // channelIndex.partialUpdateObject({
+          //   subscribers: {
+          //     value: 1,
+          //     _operation: 'Decrement',
+          //   },
+          //   objectID: searchId,
+          // }, (err, content) => {
+          //   if (err) {
+          //     console.error(err);
+          //   }
+          //   console.log('Channel Subscriber Decremented');
+          // });
         }
 
         return res.status(200).json({ userSub, success: true });

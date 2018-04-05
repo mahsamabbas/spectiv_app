@@ -2,7 +2,7 @@ import AWS from 'aws-sdk';
 import _ from 'lodash';
 import async from 'async';
 import fetch from 'node-fetch';
-
+const search = require('./../config/search');
 import db from '../models';
 import { videoIndex, channelIndex } from './../config/algolia';
 
@@ -23,54 +23,70 @@ function handleSearchIndexUpdate(key, searchId) {
         return cb();
       },
       (cb) => {
-        channelIndex.partialUpdateObject(
-          {
-            avatarUrl: `${process.env.AWS_AVATAR_CDN}/${key}`,
-            objectID: searchId
-          },
-          error => {
-            if (error) {
-              return cb(error);
-            }
-            cb();
-          }
-        );
+        search.partialUpdateChannel({avatarUrl: `${process.env.AWS_AVATAR_CDN}/${key}`,objectID: searchId})
+        .then(function(object){
+          console.log("avatar url is updated in search index");
+          cb();
+        })
+        // channelIndex.partialUpdateObject(
+        //   {
+        //     avatarUrl: `${process.env.AWS_AVATAR_CDN}/${key}`,
+        //     objectID: searchId
+        //   },
+        //   error => {
+        //     if (error) {
+        //       return cb(error);
+        //     }
+        //     cb();
+        //   }
+        // );
       },
       (cb) => {
-        channelIndex.getObject(
-          searchId,
-          (error2, channelContent) => {
-            if (error2) {
-              console.error(error2);
-              return cb(error2);
-            }
-            if (channelContent.videos) {
-              channelVideos = _.map(channelContent.videos, (vidId) => {
-                return {
-                  channelAvatar: `${process.env.AWS_AVATAR_CDN}/${key}`,
-                  objectID: vidId
-                };
-              }
-              );
-            }
-            return cb();
-          }
-        );
+        search.getChannelObject(searchId)
+        .then(function(response){
+          console.log("fetching channel object by searchId from search");
+          return cb();
+        })
+        // channelIndex.getObject(
+        //   searchId,
+        //   (error2, channelContent) => {
+        //     if (error2) {
+        //       console.error(error2);
+        //       return cb(error2);
+        //     }
+        //     if (channelContent.videos) {
+        //       channelVideos = _.map(channelContent.videos, (vidId) => {
+        //         return {
+        //           channelAvatar: `${process.env.AWS_AVATAR_CDN}/${key}`,
+        //           objectID: vidId
+        //         };
+        //       }
+        //       );
+        //     }
+        //     return cb();
+        //   }
+        // );
       },
       (cb) => {
         if (!channelVideos) {
           return cb();
         }
-        videoIndex.partialUpdateObjects(
-          channelVideos,
-          err => {
-            if (err) {
-              console.error(err);
-              return cb(err);
-            }
-            return cb();
-          }
-        );
+        search.partialUpdateVideo(channelVideos)
+        .then(function(object){
+          console.log("updating video index with channelVideos");
+          return cb();
+        })
+        
+        // videoIndex.partialUpdateObjects(
+        //   channelVideos,
+        //   err => {
+        //     if (err) {
+        //       console.error(err);
+        //       return cb(err);
+        //     }
+        //     return cb();
+        //   }
+        // );
       }
     ], (err) => {
       if (err) {
@@ -279,17 +295,22 @@ function handleThumbnailUpload(req) {
         if (!searchId || process.env.NODE_ENV !== 'production') {
           return cb();
         }
-        videoIndex.partialUpdateObject({
-          thumbnailPath: originalUrl,
-          objectID: searchId,
-        }, (error) => {
-          if (error) {
-            return cb({
-              status: 500, err: error
-            });
-          }
+        search.partialUpdateVideo({thumbnailPath: originalUrl, objectID: searchId})
+        .then(function(object){
+          console.log("update video index with thumbnailPath and searchID");
           return cb();
-        });
+        })
+        // videoIndex.partialUpdateObject({
+        //   thumbnailPath: originalUrl,
+        //   objectID: searchId,
+        // }, (error) => {
+        //   if (error) {
+        //     return cb({
+        //       status: 500, err: error
+        //     });
+        //   }
+        //   return cb();
+        // });
       },
       (cb) => {
         const resizeHost = process.env.SPECTIV_IMAGE_RESIZE_HOST;

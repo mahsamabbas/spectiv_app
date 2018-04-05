@@ -4,7 +4,7 @@ import db from './../models';
 import createTags from './../lib/tag/createTags';
 import updateTags from './../lib/tag/updateTags';
 import { videoIndex } from './../config/algolia';
-
+const search = require('./../config/search');
 const videoController = {};
 
 videoController.createVideo = (req, res) => {
@@ -108,14 +108,18 @@ videoController.updateVideo = (req, res) => {
       accessibility: Number(accessibility),
     });
     if (searchId && process.env.NODE_ENV === 'production') {
-      videoIndex.partialUpdateObject({
-        title,
-        desc,
-        objectID: searchId,
-      }, (err, content) => {
-        if (err) { console.error(err); }
-        console.log('Video index was updated');
-      });
+      search.partialUpdateVideo({title, desc, objectID: searchId})
+      .then(function(object){
+        console.log('Video index was updated in search');
+      })
+      // videoIndex.partialUpdateObject({
+      //   title,
+      //   desc,
+      //   objectID: searchId,
+      // }, (err, content) => {
+      //   if (err) { console.error(err); }
+      //   console.log('Video index was updated');
+      // });
     }
     updateTags(cleanTags, id, videoId).then((createdTags) => {
       const videoTags = createdTags.map((tag) => {
@@ -194,16 +198,20 @@ videoController.getVideo = (req, res) => {
     video.increment('viewCount');
     // UPDATE THE VIDEO IN SEARCH INDEX
     if (video.searchId && process.env.NODE_ENV === 'production') {
-      videoIndex.partialUpdateObject({
-        views: {
-          value: 1,
-          _operation: 'Increment',
-        },
-        objectID: video.searchId,
-      }, (err, content) => {
-        if (err) { console.error(err); }
-        console.log('Video Index view was incremented');
-      });
+      search.partialUpdateVideo({views:{value:1, _operation:'Increment'},objectID: video.searchId,})
+      .then(function(object){
+        console.log('Video Index view was incremented in search');
+      })
+      // videoIndex.partialUpdateObject({
+      //   views: {
+      //     value: 1,
+      //     _operation: 'Increment',
+      //   },
+      //   objectID: video.searchId,
+      // }, (err, content) => {
+      //   if (err) { console.error(err); }
+      //   console.log('Video Index view was incremented');
+      // });
     }
     let owner = false;
     if (req.user) {

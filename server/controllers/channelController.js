@@ -1,6 +1,7 @@
 import db from "./../models";
 import createCategories from "./../lib/category/createCategories";
 import { channelIndex, videoIndex } from "./../config/algolia";
+const search = require('./../config/search');
 const channelModel = require('./../models/Channel');
 
 const channelController = {};

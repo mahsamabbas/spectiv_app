@@ -8,6 +8,7 @@ import fs from 'fs';
 import transcoder from '../lib/helpers/transcoder';
 import db from '../models';
 import { videoIndex, channelIndex } from './../config/algolia';
+const search =  require('./../config/search');
 
 const videoModel = require('./../models/Video');
 
@@ -87,7 +88,12 @@ const crashReport = (res, userId, videoId, videoHash, searchId) => {
         return cb();
       }
       // DELETE THE VIDEO FROM SEARCH INDEX
-      videoIndex.deleteObject(searchId, cb);
+      //videoIndex.deleteObject(searchId, cb);
+      search.deleteVideo(searchId)
+      .then(function(response){
+        console.log("deleteing object from searchIndex");
+        cb();
+      })
     }
   ], err => {
     if (err) {
@@ -140,9 +146,14 @@ videoUploadController.delete = (req, res) => {
           .then(() => {
             // DELETE THE VIDEO FROM SEARCH INDEX
             if (process.env.NODE_ENV === 'production') {
-              videoIndex.deleteObject(searchId, error => {
-                return cb(error);
-              });
+                search.deleteVideo(searchId)
+                .then(function(response){
+                  console.log("deleting object from search");
+                })
+              // videoIndex.deleteObject(searchId, error => {
+              //   return cb(error);
+              // });
+              return cb(error);
             } else {
               return cb();
             }
@@ -204,35 +215,59 @@ videoUploadController.upload = (req, res) => {
             });
 
           if (process.env.NODE_ENV === 'production') {
-            videoIndex.addObject(videoObj, (err, videoContent) => {
-              if (err) {
-                console.error(err);
-                crashReport(res, req.user.id, videoId, videoHash, searchId);
-                return res.status(500).json(err);
-              }
-              searchId = videoContent.objectID;
+            search.addObjectToVideo(videoObj)
+            .then(function(object){
               result.updateAttributes({
                 searchId,
               });
-              console.log('Video was added to the index');
               res.status(200).json({
                 videoId: result.id,
                 searchId
               });
-              channelIndex.partialUpdateObject({
-                videos: {
-                  value: searchId,
-                  _operation: 'Add',
-                },
-                objectID: fields.channelSearchId,
-              }, (err2) => {
-                if (err2) {
-                  console.error(err2);
-                  crashReport(res, req.user.id, videoId, videoHash, searchId);
-                }
+              console.log('Video was added to the index');
+              search.partialUpdateChannel({videos:{value: searchId, _operation:'Add'},objectID:searchId})
+              .then(function(obj){
                 console.log('Video objectID was added to Channel index');
-              });
-            });
+              }).catch(function(err2){
+                console.error(err2);
+                crashReport(res, req.user.id, videoId, videoHash, searchId);
+              })
+            }).catch(function(){
+              console.error(err);
+              crashReport(res, req.user.id, videoId, videoHash, searchId);
+              return res.status(500).json(err);
+            })
+            
+            
+            // videoIndex.addObject(videoObj, (err, videoContent) => {
+            //   if (err) {
+            //     console.error(err);
+            //     crashReport(res, req.user.id, videoId, videoHash, searchId);
+            //     return res.status(500).json(err);
+            //   }
+            //   searchId = videoContent.objectID;
+            //   result.updateAttributes({
+            //     searchId,
+            //   });
+            //   console.log('Video was added to the index');
+            //   res.status(200).json({
+            //     videoId: result.id,
+            //     searchId
+            //   });
+            //   channelIndex.partialUpdateObject({
+            //     videos: {
+            //       value: searchId,
+            //       _operation: 'Add',
+            //     },
+            //     objectID: fields.channelSearchId,
+            //   }, (err2) => {
+            //     if (err2) {
+            //       console.error(err2);
+            //       crashReport(res, req.user.id, videoId, videoHash, searchId);
+            //     }
+            //     console.log('Video objectID was added to Channel index');
+            //   });
+            // });
           }
 
           const s3Stream = require('s3-upload-stream')(new AWS.S3());
@@ -319,16 +354,21 @@ videoUploadController.upload = (req, res) => {
                         videopaths.thumbnailPath = `${process.env.AWS_VIDEO_CDN}/${newKey}`;
 
                         if (process.env.NODE_ENV === 'production') {
-                          videoIndex.partialUpdateObject({
-                            thumbnailPath: `${process.env.AWS_VIDEO_CDN}/${newKey}`,
-                            objectID: searchId,
-                          }, (error) => {
-                            if (error) {
-                              console.error(error);
-                            } else {
-                              console.log('Video thumbnail is updated');
-                            }
-                          });
+                          search.partialUpdateVideo({thumbnailPath: `${process.env.AWS_VIDEO_CDN}/${newKey}`,objectID: searchId})
+                          .then(function(object){
+                            console.log('Video thumbnail is updated in search index');
+                          })
+                          
+                          // videoIndex.partialUpdateObject({
+                          //   thumbnailPath: `${process.env.AWS_VIDEO_CDN}/${newKey}`,
+                          //   objectID: searchId,
+                          // }, (error) => {
+                          //   if (error) {
+                          //     console.error(error);
+                          //   } else {
+                          //     console.log('Video thumbnail is updated');
+                          //   }
+                          // });
                         }
 
                         s3.copyObject({

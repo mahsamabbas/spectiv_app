@@ -1,5 +1,5 @@
 import * as clients from './../config/algolia';
-
+const search = require('./../config/search');
 const searchController = {};
 
 searchController.search = (req, res) => {
@@ -89,7 +89,11 @@ searchController.search = (req, res) => {
   };
 
   if (process.env.NODE_ENV === 'production') {
-    return client.search(queries, searchCallback);
+    //return client.search(queries, searchCallback);
+    return search.searchQueries(queries)
+    .then(function(response){
+      searchCallback
+    })
   }
   return searchCallback(null, []);
 };
