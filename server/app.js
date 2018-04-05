@@ -7,6 +7,7 @@ import compression from 'compression';
 import webpack from 'webpack';
 import webpackMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
+import morgan from 'morgan';
 
 // Authentication
 import passport from 'passport';
@@ -49,6 +50,7 @@ const allowCrossDomain = (req, res, next) => {
 };
 
 // Middleware
+app.use(morgan('tiny'));
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(cookieParser(process.env.JWT_SECRET));

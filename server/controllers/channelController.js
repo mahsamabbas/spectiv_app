@@ -8,15 +8,15 @@ const channelController = {};
 channelController.getChannel = (req, res) => {
 
   channelModel.getOneByUrl(req.user, req.params.channelURL)
-  .then(function(data){
-    return res.status(200).json(data);
-  }).catch(function(err){
-    if(err.message){
-      return res.status(404).json(err);
-    }else{
-      return res.status(500).json(err);
-    }
-  })
+    .then(function (data) {
+      return res.status(200).json(data);
+    }).catch(function (err) {
+      if (err.message) {
+        return res.status(404).json(err);
+      } else {
+        return res.status(500).json(err);
+      }
+    })
 };
 
 channelController.myChannel = (req, res) => {
@@ -29,47 +29,47 @@ channelController.myChannel = (req, res) => {
 
   channelModel.myChannel(req.user)
     .then(function (result) {
-        res.status(200).json(result);
-      }
+      res.status(200).json(result);
+    }
     )
     .catch(function (error) {
-        console.log("in catch");
-        res.send(error);
-      }
+      console.log("in catch");
+      res.send(error);
+    }
     );
 };
 
 channelController.createChannel = (req, res) => {
-  channelModel.createChannel(req.user,req.body)
-  .then(function(result){
-    res.status(200).json(result);
-  })
-  .catch(function(error){
-    res.send(error);
-  });
+  channelModel.createChannel(req.user, req.body)
+    .then(function (result) {
+      res.status(200).json(result);
+    })
+    .catch(function (error) {
+      res.send(error);
+    });
 };
 
 channelController.updateChannel = (req, res) => {
   channelModel.updateChannel(req.body)
-  .then(function(result){
-    res.status(200).json(result);
-  }).catch(function(err){
-    res.status(500).json({ err })
-  });
+    .then(function (result) {
+      res.status(200).json(result);
+    }).catch(function (err) {
+      res.status(500).json({ err })
+    });
 };
 
- channelController.getAllFeatured = (req, res) => {
+channelController.getAllFeatured = (req, res) => {
   channelModel.getAllFeatured()
-  .then(function(channels){
-    res.status(200).json({
-      channels
+    .then(function (channels) {
+      res.status(200).json({
+        channels
+      });
+    })
+    .catch(function (err) {
+      res.status(500).json({
+        err
+      });
     });
-  })
-  .catch(function(err){
-    res.status(500).json({
-      err
-    });
-  });
- };
+};
 
 export default channelController;

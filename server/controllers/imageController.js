@@ -158,7 +158,7 @@ function handleAvatarUpload(req) {
         });
       },
       (cb) => {
-        const resizeHost = process.env.IMAGE_RESIZE_HOST;
+        const resizeHost = process.env.SPECTIV_IMAGE_RESIZE_HOST;
         fetch(`${resizeHost}/resize/avatar/${baseDir}`, { method: 'POST' })
           .then(() => {
             return cb();
@@ -177,56 +177,150 @@ function handleAvatarUpload(req) {
   });
 }
 
-imageController.upload = (req, res) => {
+function handleThumbnailUpload(req) {
   const { id } = req.user;
-  if (id) {
-    if (req.body.videoHash) {
-      // TODO - handle video image upload in own function
-      const { videoHash, videoId, searchId } = req.body;
-      const Key = `user_${id}/${videoHash}/thumbnails/${req.file.originalname.replace(/[^\w.]/g, '')}`;
-      const params = { Bucket: process.env.AWS_VIDEO_BUCKET, Key };
-      const s3 = new AWS.S3({ params });
+  const { videoHash, videoId, searchId } = req.body;
+  const fileName = req.file.originalname.replace(/[^\w.]/g, '');
+  const thumbnailsDir = `user_${id}/thumbnails/${videoHash}`;
+  const sizeDirs = ['xs', 'sm', 'md', 'lg', 'xl'];
+  const originalKey = `${thumbnailsDir}/${fileName}`;
+  const originalUrl = `${process.env.AWS_AVATAR_CDN}/${originalKey}`;
+  const params = {
+    Bucket: process.env.AWS_AVATAR_BUCKET,
+    Key: originalKey
+  };
+  const s3 = new AWS.S3({ params });
 
-      s3.listObjectsV2({ Bucket: params.Bucket, Prefix: `user_${id}/${videoHash}/thumbnails` }, (err, data) => {
-        const objList = _.map(data.Contents, obj => ({ Key: obj.Key }));
+
+  return new Promise((resolve, reject) => {
+    if (!id) {
+      return reject({
+        code: 401,
+        body: 'Unauthorized'
+      });
+    }
+    let objList;
+    async.series([
+      cb => {
+        s3.listObjectsV2({ Bucket: params.Bucket, Prefix: thumbnailsDir }, (err, data) => {
+          if (err) {
+            return cb({
+              code: 500,
+              err
+            });
+          }
+          objList = _.map(data.Contents, obj => ({ Key: obj.Key }));
+          return cb();
+        });
+      },
+      cb => {
+        // deleteObjects
+        if (!objList.length) {
+          return cb();
+        }
         s3.deleteObjects({
           Bucket: params.Bucket,
           Delete: {
             Objects: objList,
             Quiet: true,
           },
-        }, () => {
-          s3.upload({ Body: req.file.buffer }, (err2) => {
-            if (err2) {
-              console.error(err2);
-              return res.status(500).json({ Err: err2 });
-            }
-          }).send(() => {
-            const thumbnailPath = `${process.env.AWS_VIDEO_CDN}/${Key}`;
-            // UPDATE SEARCH INDEX WITH THUMBNAIL PATH
-            if (searchId) {
-              videoIndex.partialUpdateObject({
-                thumbnailPath,
-                objectID: searchId,
-              }, (error) => {
-                if (error) {
-                  console.error(error);
-                }
+        }, (err2) => {
+          if (err2) {
+            console.error('deletObjects() error');
+            return cb({
+              code: 500,
+              err: err2
+            });
+          }
+          return cb();
+        });
+      },
+      cb => {
+        // upload initial
+        s3.upload({ Body: req.file.buffer, Key: originalKey }, (err) => {
+          if (err) {
+            return cb({
+              code: 500,
+              err
+            });
+          }
+          return cb();
+        });
+      },
+      cb => {
+        // upload to resize into size dirs
+        async.eachSeries(sizeDirs, (sizeDir, cb2) => {
+          const sizeKey = `${thumbnailsDir}/${sizeDir}/${fileName}`;
+          s3.upload({ Body: req.file.buffer, Key: sizeKey }, err => {
+            if (err) {
+              return cb({
+                code: 500,
+                err
               });
             }
-
-            db.Video.update({
-              thumbnailPath: `${process.env.AWS_VIDEO_CDN}/${Key}`,
-            }, {
-              where: {
-                id: videoId,
-                isDeleted: false,
-              },
-            });
-            return res.status(200).json({ avatarPath: `${process.env.AWS_VIDEO_CDN}/${Key}` });
+            return cb2();
           });
+        }, cb);
+      },
+      cb => {
+        // update record URL
+        db.Video.update({
+          thumbnailPath: originalUrl
+        }, {
+          where: {
+            id: videoId,
+            isDeleted: false,
+          },
         });
-      });
+        return cb();
+      },
+      cb => {
+        // update search
+        if (!searchId || process.env.NODE_ENV !== 'production') {
+          return cb();
+        }
+        videoIndex.partialUpdateObject({
+          thumbnailPath: originalUrl,
+          objectID: searchId,
+        }, (error) => {
+          if (error) {
+            return cb({
+              status: 500, err: error
+            });
+          }
+          return cb();
+        });
+      },
+      (cb) => {
+        const resizeHost = process.env.SPECTIV_IMAGE_RESIZE_HOST;
+        fetch(`${resizeHost}/resize/thumbnail/${encodeURIComponent(thumbnailsDir)}`, { method: 'POST' })
+          .then(() => {
+            return cb();
+          })
+          .catch(err => {
+            return cb({ code: 500, err });
+          });
+      }
+    ], err => {
+      if (err) {
+        console.error(err);
+        return reject(err);
+      }
+      return resolve(originalUrl);
+    });
+  });
+}
+
+imageController.upload = (req, res) => {
+  if (req.user.id) {
+    if (req.body.videoHash) {
+      handleThumbnailUpload(req)
+        .then(path => {
+          return res.status(200).json({ avatarPath: path });
+        })
+        .catch(err => {
+          return res.status(err.code).json({ Err: err.err });
+        });
     } else {
       handleAvatarUpload(req)
         .then((path) => {

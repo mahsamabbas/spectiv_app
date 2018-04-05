@@ -4,7 +4,6 @@ import crypto from 'crypto';
 import async from 'async';
 import nodemailer from 'nodemailer';
 import db from './../models';
-import { model } from 'mongoose';
 const userModel = require('./../models/User');
 const userController = {};
 
@@ -69,34 +68,34 @@ userController.createUser = (req, res, next) => {
   }
 
   userModel.createUser(username, email, password)
-  .then(function(createdUser){
-    passport.authenticate('local', (err, user, info) => {
-      if (err) {
-        return next(err); // will generate a 500 error
-      }
-      // Generate a JSON response reflecting authentication status
-      if (!user) {
-        return res.status(500).json({
-          success: false,
-          message: 'Username or password is invalid.',
-        });
-      }
-      req.login(user, (err2) => {
-        if (err2) {
-          return next(err2);
+    .then(function (createdUser) {
+      passport.authenticate('local', (err, user, info) => {
+        if (err) {
+          return next(err); // will generate a 500 error
         }
-        return res.status(200).json({
-          success: true,
-          message: 'You have successfully logged in!',
-          route: '/',
+        // Generate a JSON response reflecting authentication status
+        if (!user) {
+          return res.status(500).json({
+            success: false,
+            message: 'Username or password is invalid.',
+          });
+        }
+        req.login(user, (err2) => {
+          if (err2) {
+            return next(err2);
+          }
+          return res.status(200).json({
+            success: true,
+            message: 'You have successfully logged in!',
+            route: '/',
+          });
         });
+      })(req, res, next);
+    }).catch(function (err) {
+      return res.status(500).json({
+        err,
       });
-    })(req, res, next);
-  }).catch(function(err){
-    return res.status(500).json({
-      err,
-    });
-  })
+    })
 };
 
 userController.logout = (req, res) => {
@@ -163,29 +162,28 @@ userController.sendPasswordChange = (req, res) => {
         done(err, token);
       });
     },
-    (token, done) => 
-    {
-      userModel.findUser({username, email})
-      .then(function(user){
-        if (!user) {
-          // TODO - update flow so that this security hole is closed.
-          // A bad actor could use this to find what email addresses / usernames
-          // are registered and then brute force password
-          return res.status(500).json({
-            message: 'There isn\'t a user with that username and email',
-            success: false,
-          });
-        }
-        const date = Date.now() + (7 * 24 * 60 * 60 * 1000);
+    (token, done) => {
+      userModel.findUser({ username, email })
+        .then(function (user) {
+          if (!user) {
+            // TODO - update flow so that this security hole is closed.
+            // A bad actor could use this to find what email addresses / usernames
+            // are registered and then brute force password
+            return res.status(500).json({
+              message: 'There isn\'t a user with that username and email',
+              success: false,
+            });
+          }
+          const date = Date.now() + (7 * 24 * 60 * 60 * 1000);
 
-        user.updateAttributes({
-          resetPasswordToken: token,
-          resetPasswordExpires: date,
-        });
-        done(null, token, user);
-      }).catch(function(err){
-        done(err, null, null);
-      })
+          user.updateAttributes({
+            resetPasswordToken: token,
+            resetPasswordExpires: date,
+          });
+          done(null, token, user);
+        }).catch(function (err) {
+          done(err, null, null);
+        })
     },
     (token, user, done) => {
       const smtpInfo = nodemailer.createTransport(process.env.EMAIL_CONNECTION_STRING);
@@ -220,31 +218,30 @@ userController.changePassword = (req, res) => {
   const { token } = req.params;
 
   async.waterfall([
-    (done) => 
-    {
-      userModel.findUser({resetPasswordToken: token})
-      .then(function(user){
-        if (!user) {
-          return res.status(500).json({
-            message: 'There is no user with reset token.',
-            success: false,
+    (done) => {
+      userModel.findUser({ resetPasswordToken: token })
+        .then(function (user) {
+          if (!user) {
+            return res.status(500).json({
+              message: 'There is no user with reset token.',
+              success: false,
+            });
+          } else if (user.resetPasswordExpires < Date.now()) {
+            return res.status(500).json({
+              message: 'The time exceeded for the token please get a new token.',
+              success: false,
+            });
+          }
+          user.updateAttributes({
+            password,
+            resetPasswordToken: null,
+            resetPasswordExpires: null,
           });
-        } else if (user.resetPasswordExpires < Date.now()) {
-          return res.status(500).json({
-            message: 'The time exceeded for the token please get a new token.',
-            success: false,
-          });
-        }
-        user.updateAttributes({
-          password,
-          resetPasswordToken: null,
-          resetPasswordExpires: null,
-        });
 
-        done(null, user);
-      }).catch(function(err){
-        done(err, null);
-      })
+          done(null, user);
+        }).catch(function (err) {
+          done(err, null);
+        })
     }, (user, done) => {
       const smtpInfo = nodemailer.createTransport(process.env.EMAIL_CONNECTION_STRING);
       const mailOption = {
@@ -276,11 +273,11 @@ userController.changePassword = (req, res) => {
 userController.apply = (req, res) => {
   if (req.user) {
     userModel.apply(req.user.id)
-    .then(function(data){
-      return res.status(200).json(data);
-    }).catch(function(err){
-      return res.write('There was an internal server error.');
-    })
+      .then(function (data) {
+        return res.status(200).json(data);
+      }).catch(function (err) {
+        return res.write('There was an internal server error.');
+      })
   } else {
     return res.status(200).json({
       login: false,
@@ -294,13 +291,13 @@ userController.submitApplication = (req, res) => {
   if (req.user) {
     const { id } = req.user;
     userModel.submitApplication(id, technology, yesNo, explain)
-    .then(function(){
-      return res.status(200).json({
-        success: true,
-      });
-    }).catch(function(err){
-      return res.status(500).json(err);
-    })
+      .then(function () {
+        return res.status(200).json({
+          success: true,
+        });
+      }).catch(function (err) {
+        return res.status(500).json(err);
+      })
   } else {
     return res.status(401).json({
       login: false,
@@ -310,11 +307,11 @@ userController.submitApplication = (req, res) => {
 
 userController.getApplications = (req, res) => {
   userModel.getApplications()
-  .then(function(data){
-    return res.status(200).json(data);
-  }).catch(function(err){
-    return res.status(500).json(err);
-  })
+    .then(function (data) {
+      return res.status(200).json(data);
+    }).catch(function (err) {
+      return res.status(500).json(err);
+    })
 };
 
 userController.editUserInfo = (req, res) => {
@@ -322,11 +319,11 @@ userController.editUserInfo = (req, res) => {
   const { firstName, lastName, email } = req.body;
 
   userModel.editUserInfo(id, firstName, lastName, email)
-  .then(function(){
-    return res.status(200).json({success:true,})
-  }).catch(function(err){
-    return res.status(500).json({err});
-  })
+    .then(function () {
+      return res.status(200).json({ success: true, })
+    }).catch(function (err) {
+      return res.status(500).json({ err });
+    })
 };
 
 userController.editPassword = (req, res) => {
@@ -334,44 +331,44 @@ userController.editPassword = (req, res) => {
   const { oldPassword, newPassword } = req.body;
 
   userModel.findUser({ id })
-  .then(function(user){
-    db.User.validatePassword(oldPassword, user.password, (err, matchedUser) => {
-      if (matchedUser) {
-        user.updateAttributes({
-          password: newPassword,
+    .then(function (user) {
+      db.User.validatePassword(oldPassword, user.password, (err, matchedUser) => {
+        if (matchedUser) {
+          user.updateAttributes({
+            password: newPassword,
+          });
+
+          const smtpInfo = nodemailer.createTransport(process.env.EMAIL_CONNECTION_STRING);
+          const mailOption = {
+            to: user.email,
+            from: 'no-reply@spectivvr.com',
+            subject: 'Your Spectiv password has been changed',
+            text: `Hello, \n\n This is a confirmation email that your password has been changed for your ${user.email} account.\n`,
+            html: `<p>Hello,</p><p>This is a confirmation email that your password has been changed for ${user.email} account.</p><p>Please do not respond to this email</p>`,
+          };
+
+          smtpInfo.sendMail(mailOption, (error) => {
+            if (error) {
+              console.log(error);
+            }
+          });
+
+          return res.status(200).json({
+            success: true,
+          });
+        }
+
+        return res.status(500).json({
+          message: 'The old password was incorrect',
+          success: false,
         });
-
-        const smtpInfo = nodemailer.createTransport(process.env.EMAIL_CONNECTION_STRING);
-        const mailOption = {
-          to: user.email,
-          from: 'no-reply@spectivvr.com',
-          subject: 'Your Spectiv password has been changed',
-          text: `Hello, \n\n This is a confirmation email that your password has been changed for your ${user.email} account.\n`,
-          html: `<p>Hello,</p><p>This is a confirmation email that your password has been changed for ${user.email} account.</p><p>Please do not respond to this email</p>`,
-        };
-
-        smtpInfo.sendMail(mailOption, (error) => {
-          if (error) {
-            console.log(error);
-          }
-        });
-
-        return res.status(200).json({
-          success: true,
-        });
-      }
-
+      }, user);
+    }).catch(function (err) {
       return res.status(500).json({
-        message: 'The old password was incorrect',
+        err,
         success: false,
       });
-    }, user);
-  }).catch(function(err){
-    return res.status(500).json({
-      err,
-      success: false,
-    });
-  })
+    })
 };
 
 export default userController;

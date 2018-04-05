@@ -1,6 +1,6 @@
-import _ from 'lodash';
 import db from './../models';
 import updateCategories from './../lib/category/updateCategories';
+
 export default (sequelize, DataTypes) => {
   const Category = sequelize.define('Category', {
     name: {
@@ -15,42 +15,32 @@ export default (sequelize, DataTypes) => {
   return Category;
 };
 
-exports.getAll = function(){
-  return new Promise(function(resolve, reject){
+exports.getAll = () => {
+  return new Promise((resolve, reject) => {
     db.Category.findAll({ attributes: ['id', 'name'] })
-    .then(function(data){
-      resolve(data);
-    }).catch(function(err){
-      reject(err);
-    })
+      .then(resolve)
+      .catch(reject);
   });
-}
+};
 
-exports.getCategory = function(channelid){
+exports.getCategory = (channelid) => {
   const { channelId } = channelid;
-  return new Promise(function(resolve, reject){
+  return new Promise((resolve, reject) => {
     db.ChannelCategory.findAll({
       where: { channelId },
       attributes: ['categoryId'],
-    }).then(function(data){
-      resolve(data);
-    }).catch(function(err){
-      reject(err);
     })
+      .then(resolve)
+      .catch(reject);
   });
-}
+};
 
-exports.update = function(categories, channelId){
-
-  return new Promise(function(resolve, reject){
+exports.update = (categories, channelId) => {
+  return new Promise((resolve, reject) => {
     updateCategories(categories, channelId)
-    .then(function(){
-      resolve({ msg: 'success' });
-    }).catch(function(err){
-      reject(err);
-    })
+      .then(() => {
+        resolve({ msg: 'success' });
+      })
+      .catch(reject);
   });
-  // updateCategories(req.body.categories, req.body.channelId)
-  // .then(() => res.status(200).json({ msg: 'success' }))
-  // .catch(err => res.status(500).json(err));
-}
+};

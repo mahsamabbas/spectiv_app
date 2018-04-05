@@ -85,123 +85,123 @@ export default (sequelize, DataTypes) => {
   return User;
 };
 
-exports.createUser = function(username, email, password){
-  return new Promise(function(resolve, reject){
+exports.createUser = function (username, email, password) {
+  return new Promise(function (resolve, reject) {
     db.User.create({
       username,
       email,
       password,
       isInactive: false,
       isApproved: false,
-    }).then(function(createdUser){
+    }).then(function (createdUser) {
       resolve(createdUser);
-    }).catch(function(err){
+    }).catch(function (err) {
       reject(err);
     });
   });
 }
 
-exports.findUser = function(object){
-  return new Promise(function(resolve, reject){
+exports.findUser = function (object) {
+  return new Promise(function (resolve, reject) {
     db.User.findOne({
       where: object,
-    }).then(function(user){
+    }).then(function (user) {
       resolve(user);
-    }).catch(function(err){
+    }).catch(function (err) {
       reject(err);
     })
   });
 }
 
-exports.apply = function(userid){
+exports.apply = function (userid) {
 
-  var a = new Promise(function(resolve, reject){
+  var a = new Promise(function (resolve, reject) {
     db.Questionnaire.findOne({
       where: {
         userId: userid,
       },
-    }).then(function(questionnaire){
+    }).then(function (questionnaire) {
       resolve(questionnaire);
-    }).catch(function(err){
+    }).catch(function (err) {
       reject(err);
     })
   });
 
-  var b = a.then(function(questionnaire){
-    return new Promise(function(resolve, reject){
-      if(questionnaire){
+  var b = a.then(function (questionnaire) {
+    return new Promise(function (resolve, reject) {
+      if (questionnaire) {
         db.User.findOne({
           where: {
             id: userid,
           },
           attributes: ['isApproved'],
-        }).then(function(user){
+        }).then(function (user) {
           var data = {
             success: true,
             questionnaire,
             isApproved: user.isApproved,
           }
           resolve(data);
-        }).catch(function(err){
-          reject({err, success:false});
+        }).catch(function (err) {
+          reject({ err, success: false });
         })
-      }else{
-        resolve({success:true});
+      } else {
+        resolve({ success: true });
       }
     })
   });
 
   return Promise.all([a, b])
-  .then(function(a, data){
-    return data;
-  }).catch(function(err){
-    return err;
-  })
+    .then(function (a, data) {
+      return data;
+    }).catch(function (err) {
+      return err;
+    })
 }
 
-exports.submitApplication = function(user, technology, yesNo, explain){
-  return new Promise(function(resolve, reject){
+exports.submitApplication = function (user, technology, yesNo, explain) {
+  return new Promise(function (resolve, reject) {
     db.Questionnaire.create({
       technology,
       yesNo,
       explain,
       userId: user,
-    }).then(function(){
+    }).then(function () {
       resolve();
-    }).catch(function(err){
-      reject({err, success:false})
+    }).catch(function (err) {
+      reject({ err, success: false })
     })
   });
 }
 
-exports.getApplications = function(){
-  return new Promise(function(resolve, reject){
+exports.getApplications = function () {
+  return new Promise(function (resolve, reject) {
     db.Questionnaire.find({ where: {} })
-    .then(function(applications){
-      var data = {
-        applications,
-        success: true,
-      }
-      resolve(data);
-    }).catch(function(err){
-      reject({err, success:false});
-    })
+      .then(function (applications) {
+        var data = {
+          applications,
+          success: true,
+        }
+        resolve(data);
+      }).catch(function (err) {
+        reject({ err, success: false });
+      })
   });
 }
 
-exports.editUserInfo = function(id, firstName, lastName, email){
-  return new Promise(function(resolve, reject){
+exports.editUserInfo = function (id, firstName, lastName, email) {
+  return new Promise(function (resolve, reject) {
     db.User.update({
       firstName,
       lastName,
       email,
     }, {
-      where: { id },
-    }).then(function(){
-      resolve();
-    }).catch(function(err){
-      reject(err);
-    })
+        where: { id },
+      }).then(function () {
+        resolve();
+      }).catch(function (err) {
+        reject(err);
+      })
   });
 }
 

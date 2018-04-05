@@ -4,6 +4,7 @@ import multer from 'multer';
 import checkAuth from './lib/auth/checkAuth';
 
 // Import Controllers
+import utilController from './controllers/utilController';
 import userController from './controllers/userController';
 import videoController from './controllers/videoController';
 import rateController from './controllers/rateController';
@@ -87,5 +88,7 @@ routes.post('/api/subscription', checkAuth, subscriptionController.newSubscripti
 routes.delete('/api/subscription', checkAuth, subscriptionController.deleteSubscription);
 
 routes.get('/api/search', searchController.search);
+
+routes.get('/admin/utils/updateAvatars', utilController.updateAvatarStructure);
 
 export default routes;

@@ -150,6 +150,7 @@ class HeroSection extends Component {
                   image={channel.User.avatarPath}
                   name={channel.name}
                   color={channel.color}
+                  size="sm"
                   doesLink
                 />
                 <div className="video-info">

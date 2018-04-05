@@ -315,6 +315,7 @@ class Video extends Component {
               image={channel.User.avatarPath}
               name={channel.name}
               color={channel.color}
+              size="sm"
               doesLink
             />
             <div className="channel-col-wrapper">
@@ -405,6 +406,7 @@ class Video extends Component {
                   image={channel.User.avatarPath}
                   name={channel.name}
                   color={channel.color}
+                  size="sm"
                   doesLink
                 />
                 <div className="video-title-views-wrapper">
@@ -481,6 +483,7 @@ class Video extends Component {
                 image={channel.User.avatarPath}
                 name={channel.name}
                 color={channel.color}
+                size="sm"
                 doesLink
               />
               <div className="video-title-views-wrapper">
