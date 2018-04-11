@@ -90,5 +90,6 @@ routes.delete('/api/subscription', checkAuth, subscriptionController.deleteSubsc
 routes.get('/api/search', searchController.search);
 
 routes.get('/admin/utils/updateAvatars', utilController.updateAvatarStructure);
+routes.get('/admin/utils/updateThumbnails', utilController.updateThumbnailStructure);
 
 export default routes;

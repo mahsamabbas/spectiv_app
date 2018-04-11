@@ -50,6 +50,7 @@ const allowCrossDomain = (req, res, next) => {
 };
 
 // Middleware
+app.use(compression());
 app.use(morgan('tiny'));
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
@@ -124,7 +125,6 @@ if (isDeveloping) {
     next();
   });
 
-  app.use(compression());
   app.use(express.static(path.join(__dirname, '../dist')));
   app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../dist/index.html'));

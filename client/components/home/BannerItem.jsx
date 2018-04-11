@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 
 import Avatar from './../general/Avatar.jsx';
 import loadImage from './../../utils/loadImage';
+import sizedThumbnailUrl from './../../utils/sizedThumbnailUrl';
 
 class BannerItem extends Component {
   constructor(props) {
@@ -26,7 +27,10 @@ class BannerItem extends Component {
 
   loadImage() {
     if (!this.props.advertisement) {
-      loadImage(this.props.video.thumbnailPath)
+
+      const imagePath = sizedThumbnailUrl(this.props.video.thumbnailPath, 'sm');
+
+      loadImage(imagePath)
         .then((image) => {
           const newImage = `url(${image})`;
           if (this.mounted) {
@@ -47,7 +51,7 @@ class BannerItem extends Component {
 
     if (advertisement) {
       return (
-        <div className="banner-item" style={{ backgroundImage: "url('/static/images/bg.png')", ...inlineStyle }}>
+        <div className="banner-item" style={{ backgroundImage: "url('/static/images/bg.jpg')", ...inlineStyle }}>
           <div className="overlay light">
             <div className="overlay-left">
               <p>Interested in creating or putting your content on the site?</p>

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import { Link } from 'react-router';
 
+import sizedThumbnailUrl from './../../utils/sizedThumbnailUrl';
 import displayDuration from './../../utils/displayDuration';
 import LazyImage from './../general/LazyImage.jsx';
 
@@ -15,6 +16,8 @@ class SmallVideoInfo extends Component {
     const overrideStyle = inlineStyle || {};
     if (!video.thumbnailPath) {
       video.thumbnailPath = '/static/images/play.svg';
+    } else {
+      video.thumbnailPath = sizedThumbnailUrl(video.thumbnailPath, 'sm');
     }
 
     return (

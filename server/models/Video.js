@@ -1,3 +1,4 @@
+import async from 'async';
 import db from './../models';
 
 export default (sequelize, DataTypes) => {
@@ -26,6 +27,47 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       unique: true,
     },
+    channelId: DataTypes.INTEGER,
+    videoHash: DataTypes.STRING,
+    userId: DataTypes.INTEGER
+  }, {
+    instanceMethods: {
+      getVideoHashFromThumbnailPath: function () {
+        const path = this.thumbnailPath;
+        return new Promise(resolve => {
+          const rx = /\/[a-f0-9]{32}\//i;
+          const hash = this.thumbnailPath.match(rx)[0].replace(/\//g, ''); // TODO - regex match group and nix .replace() - BRW
+          return resolve(hash);
+        });
+      },
+      getChannel: function () {
+        return new Promise((resolve, reject) => {
+          db.Channel.findById(this.channelId)
+            .then(resolve)
+            .catch(reject);
+        });
+      },
+      getChannelUserId: function () {
+        return new Promise((resolve, reject) => {
+          this.getChannel()
+            .then(channel => {
+              resolve(channel.userId)
+            })
+            .catch(reject);
+        });
+      },
+      getChannelUser: function () {
+        return new Promise((resolve, reject) => {
+          this.getChannel()
+            .then(channel => {
+              channel.getUser()
+                .then(resolve)
+                .catch(reject);
+              })
+            .catch(reject);
+        });
+      }
+    }
   });
 
   return Video;

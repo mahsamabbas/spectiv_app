@@ -122,6 +122,7 @@ class HeroSection extends Component {
               format="MONO_360"
               width="100%"
               poster={selectedVideo.thumbnailPath}
+              poster-size="md"
               display-mode="inline"
               source={videoSources}
               id={`video${idx}`}
@@ -134,6 +135,7 @@ class HeroSection extends Component {
                 format="MONO_360"
                 width="100%"
                 poster={selectedVideo.thumbnailPath}
+                poster-size="md"
                 display-mode="inline"
                 source={videoSources}
                 id={`video${idx}`}

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import { Link } from 'react-router';
 
+import sizedThumbnailUrl from '../../utils/sizedThumbnailUrl';
 import displayDuration from './../../utils/displayDuration';
 
 const HeroVideoList = ({ videos, select, selectedVideo }) => {
@@ -27,8 +28,10 @@ class HeroVideoItem extends Component {
   render() {
     const { video, select, index, selectedVideo } = this.props;
     const style = {};
+
     if (video.thumbnailPath) {
-      style.backgroundImage = `url('${video.thumbnailPath}')`;
+      const imageUrl = sizedThumbnailUrl(video.thumbnailPath, 'xs');
+      style.backgroundImage = `url('${imageUrl}')`;
     }
 
     return (
@@ -38,12 +41,6 @@ class HeroVideoItem extends Component {
           <div className="hero-video-overlay" />
         </div>
       </Link>
-    );
-
-    return (
-      <div className="hero-video-item" onClick={() => select(index)}>
-        <div className="hero-video-image" style={style} />
-      </div>
     );
   }
 }

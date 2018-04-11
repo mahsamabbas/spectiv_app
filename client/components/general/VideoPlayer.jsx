@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 
+import sizedThumbnailUrl from '../../utils/sizedThumbnailUrl';
+
 class VideoPlayer extends Component {
   componentDidMount() {
     _.forEach(this.props.source, (src) => {
@@ -26,6 +28,7 @@ class VideoPlayer extends Component {
       return <source key={idx} id={`${this.props.title}-${quality}`} src={src} type={type} />;
     });
   }
+
   makeCorsUrl() {
     // let source=[];
     let sourceUrl = '';
@@ -40,15 +43,30 @@ class VideoPlayer extends Component {
   }
 
   render() {
-    const defaultProps = {};
     const corsFallBackUrl = this.makeCorsUrl();
+    let poster = this.props.poster;
+
     if (!this.props.poster) {
-      defaultProps.poster = '/static/images/play.svg';
+      poster = '/static/images/play.svg';
     }
+
+    if (this.props.poster) {
+      poster = sizedThumbnailUrl(this.props.poster, this.props.size || 'md');
+      console.log(poster);
+    }
+
     return (
       <dl8-video
-        {...this.props}
-        {...defaultProps}
+        className={this.props.className}
+        title={this.props.title}
+        author={this.props.author}
+        author-href={this.props['author-href']}
+        format={this.props.format}
+        width={this.props.width}
+        poster={poster}
+        display-mode="inline"
+        source={this.props.source}
+        id={this.props.id}
         cors-fallback-url={corsFallBackUrl}
       >
         {this.getSource()}

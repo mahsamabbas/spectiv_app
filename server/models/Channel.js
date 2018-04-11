@@ -25,6 +25,15 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       unique: true,
     },
+    userId: DataTypes.INTEGER
+  }, {
+    instanceMethods: {
+      getUser: function (done) {
+        console.log(this.userId);
+        db.User.findById(this.userId)
+          .then(done);
+      }
+    }
   });
 
   return Channel;
