@@ -46,43 +46,70 @@ class Home extends Component {
       loading: true,
     });
 
-    const promiseList = [
-      axios({
-        method: 'GET',
-        url: '/api/featured-video',
-      }),
-      axios({
-        method: 'GET',
-        url: '/api/featured-channels',
-      }),
-      axios({
-        method: 'GET',
-        url: '/api/featured-home',
-      }),
-    ];
-
-    Promise.all(promiseList).then((res) => {
-      const [videosResult, channelsResult, featuredChannelVideos] = res;
-      const { recentVideos, pickedVideos } = videosResult.data;
-      const { channels } = channelsResult.data;
-
-      const [channel1, channel2, channel3, channel4] = featuredChannelVideos.data.featuredChannels;
-      const [featured1, featured2, featured3, featured4] = channels;
-
+    axios({ method: 'GET', url: '/api/featured-home' }).then((fh) => {
+      const [channel1, channel2, channel3, channel4] = fh.data.featuredChannels;
       this.setState({
-        recentVideos,
         loading: false,
-        pickedVideos,
-        featuredChannels: [featured4, featured3, featured2, featured1],
-        featuredVideo: videosResult.data.featuredVideo,
         featuredChannelVideos: [channel2, channel4, channel3, channel1],
       });
-    }).catch((err) => {
+    })
+
+    axios({ method: 'GET', url: '/api/featured-video', }).then((fv) => {
       this.setState({
         loading: false,
-        error: true,
+        recentVideos: fv.data.recentVideos,
+        pickedVideos: fv.data.pickedVideos,
+        featuredVideo: fv.data.featuredVideo,
       });
-    });
+    })
+
+    axios({ method: 'GET', url: '/api/featured-channels' }).then((fc) => {
+      const { channels } = fc.data;
+      const [featured1, featured2, featured3, featured4] = channels
+      this.setState({
+        loading: false,
+        featuredChannels: [featured4, featured3, featured2, featured1],
+      });
+    })
+  
+
+    // const promiseList = [
+    //   axios({
+    //     method: 'GET',
+    //     url: '/api/featured-video',
+    //   }),
+    //   axios({
+    //     method: 'GET',
+    //     url: '/api/featured-channels',
+    //   }),
+    //   axios({
+    //     method: 'GET',
+    //     url: '/api/featured-home',
+    //   }),
+    // ];
+
+    // Promise.all(promiseList).then((res) => {
+    //   const [videosResult, channelsResult, featuredChannelVideos] = res;
+    //   const { recentVideos, pickedVideos } = videosResult.data;
+    //   const { channels } = channelsResult.data;
+
+    //   const [channel1, channel2, channel3, channel4] = featuredChannelVideos.data.featuredChannels;
+    //   const [featured1, featured2, featured3, featured4] = channels;
+
+    //   this.setState({
+    //     recentVideos,
+    //     loading: false,
+    //     pickedVideos,
+    //     featuredChannels: [featured4, featured3, featured2, featured1],
+    //     featuredVideo: videosResult.data.featuredVideo,
+    //     featuredChannelVideos: [channel2, channel4, channel3, channel1],
+    //   });
+    // }).catch((err) => {
+    //   this.setState({
+    //     loading: false,
+    //     error: true,
+    //   });
+    // });
   }
 
   getBannerSlides(pickedVideos) {
@@ -148,8 +175,11 @@ class Home extends Component {
   }
 
   renderContent() {
+
+    console.log("..................!!!!!!!!!!!!! Render function !!!!!!!!!!!!!!!!!....................");
     if (this.state.loading) {
       return <PageLoading message={'Loading Homepage...'} />;
+      console.log("in loading!");
     }
 
     if (this.state.error) {
