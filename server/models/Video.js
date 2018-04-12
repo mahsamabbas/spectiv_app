@@ -211,3 +211,65 @@ exports.getVideoInfo = function (videoId) {
     })
   });
 }
+
+exports.getFeaturedChannels =  () => {
+  return new Promise((resolve, reject) => {
+    db.Channel.findAll({
+      where: {
+        $or: [{
+          name: 'Photos of Africa VR',
+        }, {
+          name: 'TycerX',
+        }, {
+          name: 'AeroFotografie',
+        }, {
+          name: 'Jeremy Sciapappa',
+        }],
+      },
+      order: 'name',
+      include: [
+        {
+          model: db.UserSubscription,
+          attributes: ['id'],
+        },
+        {
+          model: db.Video,
+          where: {
+            accessibility: 1,
+            pathToOriginal: {
+              $ne: null,
+            },
+            isDeleted: {
+              $ne: true,
+            },
+            // isFeatured: true,
+          },
+          order: 'filename ASC',
+          limit: 5,
+          include: [{
+            model: db.RateVideo,
+            attributes: ['isLiked'],
+          }, {
+            model: db.Tag,
+            through: {
+              model: db.VideoTag,
+              attributes: [],
+            },
+            attributes: ['id', 'name'],
+          }],
+        },
+        {
+          model: db.User,
+          attributes: ['id', 'avatarPath'],
+        },
+      ],
+    }).then((featuredChannels) => {
+      resolve({
+        featuredChannels,
+        success: true,
+      });
+    }).catch(err => {
+      reject(err);
+    })
+  })
+}

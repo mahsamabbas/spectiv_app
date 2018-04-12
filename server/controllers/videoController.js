@@ -4,6 +4,7 @@ import db from './../models';
 import createTags from './../lib/tag/createTags';
 import updateTags from './../lib/tag/updateTags';
 import { videoIndex } from './../config/algolia';
+const videoModel = require('./../models/Video');
 
 const videoController = {};
 
@@ -494,7 +495,14 @@ videoController.getFeaturedChannelVideos = (req, res) => {
     });
   });
 };
-
+videoController.getFeaturedChannelsHome = (req, res) =>{
+  videoModel.getFeaturedChannels()
+  .then(data => {
+    return res.status(200).json(data);
+  }).catch(err => {
+    return res.status(500).json(err);
+  })
+}
 videoController.getFeaturedChannelsAndVideos = (req, res) => {
   db.Channel.findAll({
     where: {

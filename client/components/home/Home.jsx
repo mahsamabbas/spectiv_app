@@ -46,7 +46,7 @@ class Home extends Component {
       loading: true,
     });
 
-    axios({ method: 'GET', url: '/api/featured-home' }).then((homeResponse) => {
+    axios({ method: 'GET', url: '/api/featured-homeChannels' }).then((homeResponse) => {
       const [channel1, channel2, channel3, channel4] = homeResponse.data.featuredChannels;
       this.setState({
         loading: false,

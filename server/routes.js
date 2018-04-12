@@ -48,6 +48,7 @@ routes.get('/api/featured-video', videoController.getFeatured);
 routes.get('/api/recent-channel-videos/:channelId', videoController.getFeaturedChannelVideos);
 routes.get('/api/channel-videos/:channelId', videoController.getChannelVideos);
 routes.get('/api/featured-home', videoController.getFeaturedChannelsAndVideos);
+routes.get('/api/featured-homeChannels', videoController.getFeaturedChannelsHome);
 
 // Rate routes
 routes.get('/api/video/:videoId/like', rateController.getRates);
