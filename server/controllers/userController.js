@@ -5,7 +5,7 @@ import async from 'async';
 import nodemailer from 'nodemailer';
 import db from './../models';
 import { model } from 'mongoose';
-const errorLogging = require('./../config/logging');
+const logging = require('./../config/logging');
 const userModel = require('./../models/User');
 const userController = {};
 
@@ -86,7 +86,7 @@ userController.createUser = (req, res, next) => {
         if (err2) {
           return next(err2);
         }
-        errorLogging.saveInfoLog("new user: "+username+" is created");
+        logging.saveInfoLog("new user: "+username+" is created");
         return res.status(200).json({
           success: true,
           message: 'You have successfully logged in!',
@@ -281,8 +281,8 @@ userController.apply = (req, res) => {
     .then(function(data){
       return res.status(200).json(data);
     }).catch(function(err){
-      errorLogging.saveErrorLog("there was internal server error while clicking on apply for the user: "+req.user.id);
-      errorLogging.saveErrorLog(err);
+      logging.saveErrorLog("there was internal server error while clicking on apply for the user: "+req.user.id);
+      logging.saveErrorLog(err);
       return res.write('There was an internal server error.');
     })
   } else {
@@ -299,7 +299,7 @@ userController.submitApplication = (req, res) => {
     const { id } = req.user;
     userModel.submitApplication(id, technology, yesNo, explain)
     .then(function(){
-      errorLogging.saveInfoLog("new application is submited by the user: "+req.user);
+      logging.saveInfoLog("new application is submited by the user: "+req.user);
       return res.status(200).json({
         success: true,
       });
@@ -328,7 +328,7 @@ userController.editUserInfo = (req, res) => {
 
   userModel.editUserInfo(id, firstName, lastName, email)
   .then(function(){
-    errorLogging.saveInfoLog("user information is edited for the user "+req.user);
+    logging.saveInfoLog("user information is edited for the user "+req.user);
     return res.status(200).json({success:true,})
   }).catch(function(err){
     return res.status(500).json({err});
@@ -358,10 +358,10 @@ userController.editPassword = (req, res) => {
 
         smtpInfo.sendMail(mailOption, (error) => {
           if (error) {
-            errorLogging.saveErrorLog(error);
+            logging.saveErrorLog(error);
           }
         });
-        errorLogging.saveInfoLog("Password is changed for the user: "+req.user);
+        logging.saveInfoLog("Password is changed for the user: "+req.user);
         return res.status(200).json({
           success: true,
         });

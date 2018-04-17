@@ -1,6 +1,6 @@
 import db from './../models';
 import { videoIndex } from './../config/algolia';
-const errorLogging = require('./../config/logging');
+const logging = require('./../config/logging');
 const rateController = {};
 
 rateController.getRates = (req, res) => {
@@ -36,7 +36,7 @@ rateController.getRates = (req, res) => {
         });
       });
     }).catch((err) => {
-      errorLogging.saveErrorLog(err);
+      logging.saveErrorLog(err);
       res.status(500).json({
         err,
       });
@@ -99,9 +99,9 @@ rateController.rateVideo = (req, res) => {
             objectID: searchId,
           }, (err, content) => {
             if (err) {
-              errorLogging.saveErrorLog(err);
+              logging.saveErrorLog(err);
             }
-            errorLogging.saveInfoLog('Video Like Incremented for the videoId: '+videoId);
+            logging.saveInfoLog('Video Like Incremented for the videoId: '+videoId);
           });
         }
       }
@@ -125,7 +125,7 @@ rateController.rateVideo = (req, res) => {
         });
       }
     }).catch((err) => {
-      errorLogging.saveErrorLog(err);
+      logging.saveErrorLog(err);
       res.status(500).json({
         err,
       });
@@ -160,9 +160,9 @@ rateController.destroyRate = (req, res) => {
             objectID: searchId,
           }, (err, content) => {
             if (err) {
-              errorLogging.saveErrorLog(err);
+              logging.saveErrorLog(err);
             }
-            errorLogging.saveInfoLog('Video Like Decremented for the videoId: '+videoId);
+            logging.saveInfoLog('Video Like Decremented for the videoId: '+videoId);
           });
         }
       }
@@ -171,7 +171,7 @@ rateController.destroyRate = (req, res) => {
         success: true,
       });
     }).catch((err) => {
-      errorLogging.saveErrorLog(err);
+      logging.saveErrorLog(err);
       return res.status(500).json({
         err,
       });

@@ -1,5 +1,5 @@
 import _ from 'lodash';
-const errorLogging = require('./../config/logging');
+const logging = require('./../config/logging');
 import db from './../models';
 import createTags from './../lib/tag/createTags';
 import updateTags from './../lib/tag/updateTags';
@@ -42,11 +42,11 @@ videoController.createVideo = (req, res) => {
             createdVideo,
           });
         }).catch((err) => {
-          errorLogging.saveErrorLog(err);
+          logging.saveErrorLog(err);
           return res.status(500).json({ err });
         });
       }).catch((err) => {
-        errorLogging.saveErrorLog(err);
+        logging.saveErrorLog(err);
         return res.status(500).json({
           err,
         });
@@ -57,7 +57,7 @@ videoController.createVideo = (req, res) => {
       });
     }
   }).catch((err) => {
-    errorLogging.saveErrorLog(err);
+    logging.saveErrorLog(err);
     res.status(500).json({ err });
   });
 };
@@ -112,7 +112,7 @@ videoController.updateVideo = (req, res) => {
         desc,
         objectID: searchId,
       }, (err, content) => {
-        if (err) { errorLogging.saveErrorLog(err); }
+        if (err) { logging.saveErrorLog(err); }
       });
     }
     updateTags(cleanTags, id, videoId).then((createdTags) => {
@@ -128,15 +128,15 @@ videoController.updateVideo = (req, res) => {
           createdVideoTags,
         });
       }).catch((err) => {
-        errorLogging.saveErrorLog(err);
+        logging.saveErrorLog(err);
         return res.status(500).json({ err });
       });
     }).catch((err) => {
-      errorLogging.saveErrorLog(err);
+      logging.saveErrorLog(err);
       return res.status(500).json({ err });
     });
   }).catch((err) => {
-    errorLogging.saveErrorLog(err);
+    logging.saveErrorLog(err);
     return res.status(500).json({ err });
   });
 };
@@ -199,8 +199,8 @@ videoController.getVideo = (req, res) => {
         },
         objectID: video.searchId,
       }, (err, content) => {
-        if (err) { errorLogging.saveErrorLog(err); }
-        errorLogging.saveInfoLog('Video Index view was incremented for the videoId: '+videoId);
+        if (err) { logging.saveErrorLog(err); }
+        logging.saveInfoLog('Video Index view was incremented for the videoId: '+videoId);
       });
     }
     let owner = false;
@@ -241,7 +241,7 @@ videoController.getVideo = (req, res) => {
       });
     }
   }).catch((err) => {
-    errorLogging.saveErrorLog(err);
+    logging.saveErrorLog(err);
 
     return res.status(500).json({
       err,
@@ -254,7 +254,7 @@ videoController.getEditVideo = (req, res) => {
   const { id } = req.user;
 
   if (!videoId) {
-    errorLogging.saveErrorLog("video id is required to edit video");
+    logging.saveErrorLog("video id is required to edit video");
     return res.status(500).json({
       message: 'Video ID is required.',
     });
@@ -292,7 +292,7 @@ videoController.getEditVideo = (req, res) => {
       success: true,
     });
   }).catch((err) => {
-    errorLogging.saveErrorLog(err);
+    logging.saveErrorLog(err);
     return res.status(500).json({
       err,
     });
@@ -453,7 +453,7 @@ videoController.recommendedVideos = (req, res) => {
       success: true,
     });
   }).catch((err) => {
-    errorLogging.saveErrorLog(err);
+    logging.saveErrorLog(err);
     return res.status(500).json({
       err,
     });
@@ -483,12 +483,12 @@ videoController.getFeaturedChannelVideos = (req, res) => {
       },
     ],
   }).then((channel) => {
-    errorLogging(channel);
+    logging(channel);
     return res.status(200).json({
       channel,
     });
   }).catch((err) => {
-    errorLogging.saveErrorLog(err);
+    logging.saveErrorLog(err);
     return res.status(500).json({
       err,
     });

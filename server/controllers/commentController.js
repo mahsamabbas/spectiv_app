@@ -1,5 +1,5 @@
 import db from './../models';
-const errorLogging = require('./../config/logging');
+const logging = require('./../config/logging');
 
 const commentController = {};
 
@@ -77,7 +77,7 @@ commentController.getComments = (req, res) => {
         });
       });
     }).catch((err) => {
-      errorLogging.saveErrorLog(err);
+      logging.saveErrorLog(err);
       return res.status(500).json({
         err,
       });
@@ -158,7 +158,7 @@ commentController.getSubComments = (req, res) => {
       success: true,
     });
   }).catch((err) => {
-    errorLogging.saveErrorLog(err);
+    logging.saveErrorLog(err);
     res.status(500).json({
       err,
     });
@@ -178,14 +178,14 @@ commentController.createComment = (req, res) => {
       parentCommentId: parentId,
       replyCommentId: replyId,
     }).then((comm) => {
-      errorLogging.saveInfoLog("comment is created for the user: "+id);
+      logging.saveInfoLog("comment is created for the user: "+id);
       res.status(200).json({
         comment: comm,
         user: req.user.username,
         success: true,
       });
     }).catch((err) => {
-      errorLogging.saveErrorLog(err);
+      logging.saveErrorLog(err);
       res.status(500).json({
         err,
       });
@@ -210,13 +210,13 @@ commentController.editComment = (req, res) => {
           id,
         },
       }).then((newComment) => {
-        errorLogging.saveInfoLog("comment is edited with id: "+newComment.id);
+        logging.saveInfoLog("comment is edited with id: "+newComment.id);
         res.status(200).json({
           comment: newComment,
           success: true,
         });
       }).catch((err) => {
-        errorLogging.saveErrorLog(err);
+        logging.saveErrorLog(err);
         res.status(500).json({
           err,
           success: false,
@@ -228,7 +228,7 @@ commentController.editComment = (req, res) => {
       });
     }
   } else {
-    errorLogging.saveErrorLog("user not loggedin or authorized to edit comment with id: "+comment.id);
+    logging.saveErrorLog("user not loggedin or authorized to edit comment with id: "+comment.id);
     res.status(401).json({
       login: false,
     });
@@ -245,7 +245,7 @@ commentController.deleteComment = (req, res) => {
           id: comment.id,
         },
       }).then(() => {
-        errorLogging.saveInfoLog("comment with Id: "+comment.id+" is deleted");
+        logging.saveInfoLog("comment with Id: "+comment.id+" is deleted");
         res.status(200).json({
           success: true,
         });
@@ -260,7 +260,7 @@ commentController.deleteComment = (req, res) => {
       });
     }
   } else {
-    errorLogging.saveErrorLog("user not loggedin or authorized to delete comment with id: "+comment.id);
+    logging.saveErrorLog("user not loggedin or authorized to delete comment with id: "+comment.id);
     res.status(401).json({
       login: false,
     });

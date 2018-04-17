@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import db from './../models';
 import updateCategories from './../lib/category/updateCategories';
-const errorLogging = require('./../config/logging');
+const logging = require('./../config/logging');
 export default (sequelize, DataTypes) => {
   const Category = sequelize.define('Category', {
     name: {
@@ -47,7 +47,7 @@ exports.update = function(categories, channelId){
     updateCategories(categories, channelId)
     .then(function(){
       resolve({ msg: 'success' });
-      errorLogging.saveInfoLog("Categories updated for the channel: "+channelId);
+      logging.saveInfoLog("Categories updated for the channel: "+channelId);
     }).catch(function(err){
       reject(err);
     })

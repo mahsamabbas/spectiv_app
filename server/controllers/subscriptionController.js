@@ -1,8 +1,7 @@
 import _ from 'lodash';
-import db from './../models';
 import { channelIndex } from './../config/algolia';
 const subscriptionModel = require('./../models/UserSubscription');
-const errorLogging = require('./../config/logging');
+const logging = require('./../config/logging');
 const subscriptionController = {};
 
 subscriptionController.getAllSubscription = (req, res) => {
@@ -40,17 +39,17 @@ subscriptionController.newSubscription = (req, res) => {
             objectID: searchId,
           }, (err, content) => {
             if (err) {
-              errorLogging.saveErrorLog(err);
+              logging.saveErrorLog(err);
             }
           });
         }
-        errorLogging.saveInfoLog('Channel Subscriber Incremented for the channelId: '+channelId);
+        logging.saveInfoLog('Channel Subscriber Incremented for the channelId: '+channelId);
       return res.status(200).json(userSub);
     }).catch(function(err){
       return res.status(500).json( err );
     })
   } else {
-    errorLogging.saveErrorLog("User is not loggedin / Authorized to subscribe a channel with id: "+channelId);
+    logging.saveErrorLog("User is not loggedin / Authorized to subscribe a channel with id: "+channelId);
     return res.status(401).json({
       login: false,
       message: 'User is not logged in.',
@@ -74,11 +73,11 @@ subscriptionController.deleteSubscription = (req, res) => {
           objectID: searchId,
         }, (err, content) => {
           if (err) {
-            errorLogging.saveErrorLog(err);
+            logging.saveErrorLog(err);
           }
         });
       }
-      errorLogging.saveInfoLog('Channel Subscriber Decremented for the channelId: '+channelId);
+      logging.saveInfoLog('Channel Subscriber Decremented for the channelId: '+channelId);
       return res.status(200).json({ userSub, success: true });
     }).catch(function(err){
       return res.status(500).json({ err });

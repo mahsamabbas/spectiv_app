@@ -1,8 +1,7 @@
-import db from "./../models";
 import createCategories from "./../lib/category/createCategories";
 import { channelIndex, videoIndex } from "./../config/algolia";
 const channelModel = require('./../models/Channel');
-const errorLogging = require('./../config/logging');
+const logging = require('./../config/logging');
 
 const channelController = {};
 
@@ -23,7 +22,7 @@ channelController.getChannel = (req, res) => {
 channelController.myChannel = (req, res) => {
 
   if (!req.user) {
-    errorLogging.saveErrorLog("channel not found for the user: "+req.user.id);
+    logging.saveErrorLog("channel not found for the user: "+req.user.id);
     return res.status(401).json({
       message: "Channel Not Found"
     });

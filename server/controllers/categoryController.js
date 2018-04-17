@@ -1,8 +1,7 @@
 import _ from 'lodash';
-import db from './../models';
 import updateCategories from './../lib/category/updateCategories';
 const categoryModel = require('./../models/Category');
-const errorLogging = require('./../config/logging');
+const logging = require('./../config/logging');
 
 const categoryController = {};
 

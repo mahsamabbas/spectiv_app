@@ -1,5 +1,5 @@
 import db from "./../models";
-const errorLogging = require('./../config/logging');
+const logging = require('./../config/logging');
 export default (sequelize, DataTypes) => {
   const Channel = sequelize.define('Channel', {
     name: {
@@ -111,7 +111,7 @@ exports.createChannel = function(user, channelData){
         businessEmail,
         color
       }).then(function(channel){
-        errorLogging.saveInfoLog("A channel: "+channel.name+" is created");
+        logging.saveInfoLog("A channel: "+channel.name+" is created");
         resolve(channel);
       }).catch( function(err){
         reject(err);
@@ -151,12 +151,12 @@ exports.createChannel = function(user, channelData){
           if (process.env.NODE_ENV === 'production') {
             channelIndex.addObject(channelObj, (error, channelContent) => {
               if (error) {
-                errorLogging.saveErrorLog(error);
+                logging.saveErrorLog(error);
               }
               channel.updateAttributes({
                 searchId: channelContent.objectID
               });
-              errorLogging.saveInfoLog("Channel: "+channel.name+" was added to the index");
+              logging.saveInfoLog("Channel: "+channel.name+" was added to the index");
               resolve(channel);
             });
           }
@@ -170,7 +170,7 @@ exports.createChannel = function(user, channelData){
       return new Promise(function(resolve, reject){
         createCategories(categories, channel.id)
         .then(function(channel){
-          errorLogging.saveInfoLog("Categories are created for the channel: "+channel.id);
+          logging.saveInfoLog("Categories are created for the channel: "+channel.id);
           resolve(channel);
         }).catch(function(err){
           reject(err);
@@ -215,12 +215,12 @@ exports.updateChannel = function (channelData){
             },
             err => {
               if (err) {
-                errorLogging.saveErrorLog(err);
+                logging.saveErrorLog(err);
               } else {
-                errorLogging.saveInfoLog("Channel info in search index is updated");
+                logging.saveInfoLog("Channel info in search index is updated");
                 channelIndex.getObject(searchId, (err2, channelContent) => {
                   if (err2) {
-                    errorLogging.saveErrorLog(err2);
+                    logging.saveErrorLog(err2);
                   }
                   const channelVideos = channelContent.videos.map(vidId => {
                     return {
@@ -232,9 +232,9 @@ exports.updateChannel = function (channelData){
                   });
                   videoIndex.partialUpdateObjects(channelVideos, err3 => {
                     if (err3) {
-                      errorLogging.saveErrorLog(err3);
+                      logging.saveErrorLog(err3);
                     } else {
-                      errorLogging.saveInfoLog("Channel info and videos are updated");
+                      logging.saveInfoLog("Channel info and videos are updated");
                     }
                   });
                 });
@@ -244,7 +244,7 @@ exports.updateChannel = function (channelData){
         }
         // if ends
         resolve({ msg: "success" });
-        errorLogging.saveInfoLog("channel is updated for id: "+channelData.id);
+        logging.saveInfoLog("channel is updated for id: "+channelData.id);
       }).catch(function(err){
         reject(err);
       })
