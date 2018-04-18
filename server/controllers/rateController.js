@@ -1,4 +1,5 @@
 import db from './../models';
+const rateModel = require('./../models/RateVideo');
 
 const rateController = {};
 
@@ -28,32 +29,39 @@ rateController.rateVideo = (req, res) => {
     });
   }
 
-  db.RateVideo.findOrCreate({
-    where: {
-      videoId,
-      userId: id,
-    },
-    defaults: {
-      videoId,
-      userId: id,
-      isLiked,
-    },
-  }).then((rate) => {
-    rate = rate[0];
-    const rateMethod = isLiked ? rate.like.bind(rate) : rate.dislike.bind(rate);
-    rateMethod()
-      .then(() => {
-        return res.status(200).json({
-          success: true,
-        });
-      })
-      .catch(err => {
-        console.error(err);
-        return res.status(500).json({
-          err
-        });
-      });
-  });
+  db.RateVideo.rateVideo(videoId, isLiked, id)
+  .then((data) => {
+    res.status(200).json(data);
+  }).catch((err) => {
+    console.log("in err");
+    res.status(500).json(err);
+  })
+  // db.RateVideo.findOrCreate({
+  //   where: {
+  //     videoId,
+  //     userId: id,
+  //   },
+  //   defaults: {
+  //     videoId,
+  //     userId: id,
+  //     isLiked,
+  //   },
+  // }).then((rate) => {
+  //   rate = rate[0];
+  //   const rateMethod = isLiked ? rate.like.bind(rate) : rate.dislike.bind(rate);
+  //   rateMethod()
+  //     .then(() => {
+  //       return res.status(200).json({
+  //         success: true,
+  //       });
+  //     })
+  //     .catch(err => {
+  //       console.error(err);
+  //       return res.status(500).json({
+  //         err
+  //       });
+  //     });
+  // });
 };
 
 rateController.destroyRate = (req, res) => {

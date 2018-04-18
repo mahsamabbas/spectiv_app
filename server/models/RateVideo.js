@@ -80,6 +80,33 @@ export default (sequelize, DataTypes) => {
             return reject(err);
           });
         });
+      },
+      rateVideo: (videoId, isLiked, userid) => {
+        
+        return new Promise((resolve, reject) => {
+          RateVideo.findOrCreate({
+            where: {
+              videoId,
+              userId: userid,
+            },
+            defaults: {
+              videoId,
+              userId: userid,
+              isLiked,
+            },
+          }).then((rate) => {
+            rate = rate[0];
+            const rateMethod = isLiked ? rate.like.bind(rate) : rate.dislike.bind(rate);
+            rateMethod()
+              .then(() => {
+                return resolve({ success: true });
+              })
+              .catch(err => {
+                console.error(err);
+                return reject({ err });
+              });
+          });
+        })
       }
     }
   });
