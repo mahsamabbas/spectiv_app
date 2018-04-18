@@ -2,10 +2,6 @@ var winston = require('winston');
 const fs = require('fs');
 const logs = process.env.LOGGING;
 const logDirectory = process.env.LOGS_DIRECTORY;
-const errFile = process.env.ERROR_FILE;
-const infoFile = process.env.INFO_FILE;
-const warningFile = process.env.WARNING_FILE;
-const debugFile = process.env.DEBUG_FILE;
 
 exports.saveErrorLog = function (message) {
   if (logs == "true") {
@@ -16,7 +12,7 @@ exports.saveErrorLog = function (message) {
     const logger = new (winston.Logger)({
       transports: [
         new (winston.transports.File)({
-          filename: `${logDirectory}/` + errFile,
+          filename: `${logDirectory}/error.log`,
           timestamp: tsFormat,
           level: 'error'
         })
@@ -35,7 +31,7 @@ exports.saveInfoLog = function (message) {
     const logger = new (winston.Logger)({
       transports: [
         new (winston.transports.File)({
-          filename: `${logDirectory}/` + infoFile,
+          filename: `${logDirectory}/info.log`,
           timestamp: tsFormat,
           level: 'info'
         })
@@ -54,7 +50,7 @@ exports.saveWarningLog = function (message) {
     const logger = new (winston.Logger)({
       transports: [
         new (winston.transports.File)({
-          filename: `${logDirectory}/` + warningFile,
+          filename: `${logDirectory}/warning.log`,
           timestamp: tsFormat,
           level: 'warn'
         })
@@ -73,7 +69,7 @@ exports.saveDebugLog = function (message) {
     const logger = new (winston.Logger)({
       transports: [
         new (winston.transports.File)({
-          filename: `${logDirectory}/` + debugFile,
+          filename: `${logDirectory}/debug.log`,
           timestamp: tsFormat,
           level: 'debug'
         })
